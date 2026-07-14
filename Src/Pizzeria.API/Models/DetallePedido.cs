@@ -9,7 +9,7 @@ namespace Pizzeria.API.Models
     {
         public int IdDetallePedido { get; set; }
         public int IdPedido { get; set; }
-        public int IdPizza { get; set; }        // antes decía IdProducto
+        public int IdPizza { get; set; }       
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
         public string? Observaciones { get; set; }     // ej: "sin aceitunas"
