@@ -11,9 +11,6 @@ public static class PedidoValidator
         if (dto.IdCliente <= 0)
             errores.Add("Debe indicar un cliente válido.");
 
-        if (dto.IdSucursal <= 0)
-            errores.Add("Debe indicar una sucursal válida.");
-
         if (dto.Detalles is null || dto.Detalles.Count == 0)
             errores.Add("El pedido debe tener al menos una pizza.");
         else

@@ -1,143 +1,74 @@
-CREATE DATABASE IF NOT EXISTS PizzeriaDB;
-USE PizzeriaDB;
+DROP DATABASE IF EXISTS  6to_Pizzeria;
+CREATE DATABASE  6to_Pizzeria ;
+USE 6to_Pizzeria ;
+
 
 
 -- =========================
--- TABLA CLIENTES
+-- CLIENTES
 -- =========================
-CREATE TABLE Clientes (
+CREATE TABLE Cliente (
     IdCliente INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
-    Email VARCHAR(150) NOT NULL UNIQUE,
-    Direccion VARCHAR(200) NOT NULL,
-    Telefono VARCHAR(30) NOT NULL
-);
-
-
--- =========================
--- TABLA EMPLEADOS
--- =========================
-CREATE TABLE Empleados (
-    IdEmpleado INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
     Apellido VARCHAR(100) NOT NULL,
-    Rol ENUM(
-        'Administrador',
-        'Cocinero',
-        'Repartidor',
-    ) NOT NULL,
-    DNI INT NOT NULL UNIQUE,
-    Telefono VARCHAR(30) NOT NULL
+    Email VARCHAR(150) NOT NULL UNIQUE,
+    Telefono VARCHAR(30) NOT NULL,
+    Direccion VARCHAR(200) NOT NULL
 );
 
-
 -- =========================
--- TABLA SUCURSALES
+-- PIZZAS
 -- =========================
-CREATE TABLE Sucursales (
-    IdSucursal INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Direccion VARCHAR(200) NOT NULL,
-    Telefono VARCHAR(30) NOT NULL
-);
-
-
--- =========================
--- TABLA PIZZAS
--- =========================
-CREATE TABLE Pizzas (
+CREATE TABLE Pizza (
     IdPizza INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
     Precio DECIMAL(10,2) NOT NULL,
-    Descripcion TEXT
+    Descripcion VARCHAR(300),
+    Ingredientes VARCHAR(500)
 );
 
-
 -- =========================
--- TABLA INGREDIENTES
--- (para guardar List<string> Ingredientes)
+-- PEDIDOS
+-- Estado:
+-- 1 = EsperaConfirmacion
+-- 2 = EnPreparacion
+-- 3 = EnViaje
+-- 4 = Entregado
+-- 5 = Cancelado
 -- =========================
-CREATE TABLE Ingredientes (
-    IdIngrediente INT AUTO_INCREMENT PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL
-);
-
-
--- Relación muchos a muchos Pizza - Ingrediente
-CREATE TABLE PizzaIngredientes (
-    IdPizza INT NOT NULL,
-    IdIngrediente INT NOT NULL,
-
-    PRIMARY KEY(IdPizza, IdIngrediente),
-
-    FOREIGN KEY(IdPizza)
-        REFERENCES Pizzas(IdPizza)
-        ON DELETE CASCADE,
-
-    FOREIGN KEY(IdIngrediente)
-        REFERENCES Ingredientes(IdIngrediente)
-        ON DELETE CASCADE
-);
-
-
--- =========================
--- TABLA PEDIDOS
--- =========================
-CREATE TABLE Pedidos (
+CREATE TABLE Pedido (
     IdPedido INT AUTO_INCREMENT PRIMARY KEY,
-
     FechaHora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    Estado ENUM(
-        'EsperaConfirmacion',
-        'EnPreparacion',
-        'EnViaje',
-        'Entregado'
-    ) NOT NULL,
-
-    Total DECIMAL(10,2) NOT NULL DEFAULT 0,
-
-    Direccion VARCHAR(200),
+    Estado TINYINT NOT NULL,
 
     IdCliente INT NOT NULL,
-    IdEmpleado INT NOT NULL,
-    IdSucursal INT NOT NULL,
 
+    Total DECIMAL(10,2) NOT NULL,
 
-    FOREIGN KEY(IdCliente)
-        REFERENCES Clientes(IdCliente),
-
-    FOREIGN KEY(IdEmpleado)
-        REFERENCES Empleados(IdEmpleado),
-
-    FOREIGN KEY(IdSucursal)
-        REFERENCES Sucursales(IdSucursal)
+    CONSTRAINT FK_Pedido_Cliente
+        FOREIGN KEY (IdCliente)
+        REFERENCES Cliente(IdCliente)
 );
 
-
 -- =========================
--- TABLA DETALLE PEDIDO
+-- DETALLE DEL PEDIDO
 -- =========================
-CREATE TABLE DetallePedidos (
-
+CREATE TABLE DetallePedido (
     IdDetallePedido INT AUTO_INCREMENT PRIMARY KEY,
 
     IdPedido INT NOT NULL,
-
     IdPizza INT NOT NULL,
 
     Cantidad INT NOT NULL,
-
     PrecioUnitario DECIMAL(10,2) NOT NULL,
+    Observaciones VARCHAR(200),
 
-    Observaciones VARCHAR(255),
+    CONSTRAINT FK_DetallePedido_Pedido
+        FOREIGN KEY (IdPedido)
+        REFERENCES Pedido(IdPedido),
 
-
-    FOREIGN KEY(IdPedido)
-        REFERENCES Pedidos(IdPedido)
-        ON DELETE CASCADE,
-
-
-    FOREIGN KEY(IdPizza)
-        REFERENCES Pizzas(IdPizza)
+    CONSTRAINT FK_DetallePedido_Pizza
+        FOREIGN KEY (IdPizza)
+        REFERENCES Pizza(IdPizza)
 );
+

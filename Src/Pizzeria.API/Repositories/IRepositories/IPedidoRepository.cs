@@ -9,5 +9,4 @@ public interface IPedidoRepository
     Task<int> ActualizarAsync(int id, Pedido pedido);
     Task<int> EliminarAsync(int id);
     Task ActualizarEstadoAsync(int idPedido, int nuevoEstado);
-    Task AsignarEmpleadoAsync(int idPedido, int idEmpleado);
 }

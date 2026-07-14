@@ -15,15 +15,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IPizzaRepository, PizzaRepository>();
-builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
-builder.Services.AddScoped<ISucursalRepository, SucursalRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 
 // Application services (scoped)
 builder.Services.AddScoped<ClienteService>();
 builder.Services.AddScoped<PizzaService>();
-builder.Services.AddScoped<EmpleadoService>();
-builder.Services.AddScoped<SucursalService>();
 builder.Services.AddScoped<PedidoService>();
 
 // Sockets/clients
@@ -42,8 +38,6 @@ var app = builder.Build();
 app.MapClienteEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
-app.MapEmpleadoEndpoints();
-app.MapSucursalEndpoints();
 
 // Servir solo el JSON OpenAPI (no mostrar Swagger UI)
 app.UseSwagger();

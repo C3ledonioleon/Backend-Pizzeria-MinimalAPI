@@ -43,12 +43,6 @@ public static class PedidoEndpoints
             return pedido is not null ? Results.Ok(pedido) : Results.NotFound();
         });
 
-        grupo.MapPut("/{id}/asignar-empleado", async (int id, int idEmpleado, PedidoService service) =>
-        {
-            var pedido = await service.AsignarEmpleadoAsync(id, idEmpleado);
-            return pedido is not null ? Results.Ok(pedido) : Results.NotFound();
-        });
-
         grupo.MapDelete("/{id}", async (int id, PedidoService service) =>
         {
             var filasAfectadas = await service.EliminarAsync(id);

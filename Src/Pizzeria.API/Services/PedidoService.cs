@@ -35,7 +35,7 @@ public class PedidoService
         var cliente = await _clienteRepository.ObtenerPorIdAsync(dto.IdCliente)
             ?? throw new ArgumentException($"No existe un cliente con id {dto.IdCliente}");
 
-        var pedido = new Pedido(dto.IdCliente, dto.IdSucursal);
+        var pedido = new Pedido(dto.IdCliente);
         decimal total = 0;
 
         foreach (var detalleDto in dto.Detalles)
@@ -77,16 +77,6 @@ public class PedidoService
 
         await _pedidoRepository.ActualizarEstadoAsync(idPedido, (int)nuevoEstado);
         pedido.Estado = nuevoEstado;
-        return pedido;
-    }
-
-    public async Task<Pedido?> AsignarEmpleadoAsync(int idPedido, int idEmpleado)
-    {
-        var pedido = await _pedidoRepository.ObtenerPorIdAsync(idPedido);
-        if (pedido is null) return null;
-
-        await _pedidoRepository.AsignarEmpleadoAsync(idPedido, idEmpleado);
-        pedido.IdEmpleado = idEmpleado;
         return pedido;
     }
 

@@ -36,8 +36,8 @@ public class PedidoRepository : IPedidoRepository
         using var connection = _connectionFactory.CrearConexion();
 
         string sql = @"
-        INSERT INTO Pedido (FechaHora, Estado, IdCliente, IdSucursal, IdEmpleado, Total)
-        VALUES (@FechaHora, @Estado, @IdCliente, @IdSucursal, @IdEmpleado, @Total);
+        INSERT INTO Pedido (FechaHora, Estado, IdCliente, Total)
+        VALUES (@FechaHora, @Estado, @IdCliente, @Total);
         SELECT LAST_INSERT_ID();";
 
         int nuevoId = await connection.ExecuteScalarAsync<int>(sql, pedido);
@@ -56,8 +56,6 @@ public class PedidoRepository : IPedidoRepository
         SET FechaHora = @FechaHora,
             Estado = @Estado,
             IdCliente = @IdCliente,
-            IdSucursal = @IdSucursal,
-            IdEmpleado = @IdEmpleado,
             Total = @Total
         WHERE IdPedido = @IdPedido";
 
@@ -66,8 +64,6 @@ public class PedidoRepository : IPedidoRepository
             pedido.FechaHora,
             pedido.Estado,
             pedido.IdCliente,
-            pedido.IdSucursal,
-            pedido.IdEmpleado,
             pedido.Total,
             IdPedido = id
         });
@@ -91,12 +87,4 @@ public class PedidoRepository : IPedidoRepository
             new { Estado = nuevoEstado, IdPedido = idPedido });
     }
 
-    public async Task AsignarEmpleadoAsync(int idPedido, int idEmpleado)
-    {
-        using var connection = _connectionFactory.CrearConexion();
-
-        await connection.ExecuteAsync(
-            "UPDATE Pedido SET IdEmpleado = @IdEmpleado WHERE IdPedido = @IdPedido",
-            new { IdEmpleado = idEmpleado, IdPedido = idPedido });
-    }
 }
