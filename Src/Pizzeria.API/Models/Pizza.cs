@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
+namespace Pizzeria.API.Models;
 
 public class Pizza
 {
-    public int Id { get; set; }
+    public int IdPizza { get; set; }
     public string Nombre { get; set; } = string.Empty;
     public decimal Precio { get; set; }
     public string? Descripcion { get; set; }

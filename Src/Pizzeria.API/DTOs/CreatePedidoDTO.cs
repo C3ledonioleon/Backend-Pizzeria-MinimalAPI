@@ -1,5 +1,8 @@
+namespace Pizzeria.API.DTOs;
+
 public class CreatePedidoDto
 {
-    public int ClienteId { get; set; }
-    public List<int> PizzaIds { get; set; } = new();  // IDs de las pizzas que se quieren pedir
+    public int IdCliente { get; set; }
+    public int IdSucursal { get; set; }
+    public List<DetallePedidoDto> Detalles { get; set; } = new();
 }

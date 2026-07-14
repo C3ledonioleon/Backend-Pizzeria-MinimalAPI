@@ -1,72 +1,55 @@
-using Microsoft.EntityFrameworkCore;
+using Pizzeria.API.Endpoints;
+using Pizzeria.API.Services;
+using Pizzeria.API.Sockets;
+using Pizzeria.API.Data;
+using Pizzeria.API.Repositories;
+using Pizzeria.API.Repositories.IRepositories;
 using Scalar.AspNetCore;
-using TodoPSR;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//Carga la Bd en memoria RAM
-builder.Services.AddDbContext<TodoDb>(opt => opt.UseInMemoryDatabase("TodoList"));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+// =======================
+// Registro de servicios
+// =======================
+// Data / repositories
+builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IPizzaRepository, PizzaRepository>();
+builder.Services.AddScoped<IEmpleadoRepository, EmpleadoRepository>();
+builder.Services.AddScoped<ISucursalRepository, SucursalRepository>();
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+
+// Application services (scoped)
+builder.Services.AddScoped<ClienteService>();
+builder.Services.AddScoped<PizzaService>();
+builder.Services.AddScoped<EmpleadoService>();
+builder.Services.AddScoped<SucursalService>();
+builder.Services.AddScoped<PedidoService>();
+
+// Sockets/clients
+builder.Services.AddSingleton<CocinaSocketClient>();
 
 builder.Services.AddEndpointsApiExplorer();
+
+// Configure Swagger/OpenAPI (used by Scalar)
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger(options =>
-    {
-        options.RouteTemplate = "/openapi/{documentName}.json";
-    });
-    app.MapScalarApiReference();
-}
+// =======================
+// Endpoints (registrar antes de generar el JSON OpenAPI)
+// =======================
+app.MapClienteEndpoints();
+app.MapPizzaEndpoints();
+app.MapPedidoEndpoints();
+app.MapEmpleadoEndpoints();
+app.MapSucursalEndpoints();
 
-//Para un GET en la ruta "/todoitems", 
-app.MapGet("/todoitems", (TodoDb db) =>
-    db.Todos.ToList());
+// Servir solo el JSON OpenAPI (no mostrar Swagger UI)
+app.UseSwagger();
 
-app.MapGet("/todoitems/complete", (TodoDb db) =>
-    db.Todos.Where(t => t.IsComplete).ToList());
-
-app.MapGet("/todoitems/{id}", (int id, TodoDb db) =>
-    db.Todos.Find(id)
-        is Todo todo
-            ? Results.Ok(todo)
-            : Results.NotFound());
-
-app.MapPost("/todoitems", (Todo todo, TodoDb db) =>
-{
-    db.Todos.Add(todo);
-    db.SaveChanges();
-
-    return Results.Created($"/todoitems/{todo.Id}", todo);
-});
-
-app.MapPut("/todoitems/{id}", (int id, Todo inputTodo, TodoDb db) =>
-{
-    var todo = db.Todos.Find(id);
-
-    if (todo is null) return Results.NotFound();
-
-    todo.Name = inputTodo.Name;
-    todo.IsComplete = inputTodo.IsComplete;
-
-    db.SaveChanges();
-
-    return Results.NoContent();
-});
-
-app.MapDelete("/todoitems/{id}", (int id, TodoDb db) =>
-{
-    if (db.Todos.Find(id) is Todo todo)
-    {
-        db.Todos.Remove(todo);
-        db.SaveChanges();
-        return Results.NoContent();
-    }
-
-    return Results.NotFound();
-});
+// Map Scalar and point it at the Swagger JSON produced by Swashbuckle
+app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/v1/swagger.json"));
+app.MapGet("/", () => Results.Redirect("/scalar", false));
 
 app.Run();

@@ -1,6 +1,11 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Cocina.Consola;
 
-app.MapGet("/", () => "Hello World!");
+Console.Title = "Cocina";
 
-app.Run();
+Console.WriteLine("================================");
+Console.WriteLine(" Servicio Cocina iniciado");
+Console.WriteLine(" Puerto: 6000");
+Console.WriteLine("================================");
+
+var servidor = new SocketServer();
+await servidor.IniciarAsync();

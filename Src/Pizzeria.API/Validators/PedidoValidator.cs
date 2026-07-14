@@ -1,14 +1,30 @@
-using System.ComponentModel.DataAnnotations;
+using Pizzeria.API.DTOs;
 
-public class PedidoCreateDto
+namespace Pizzeria.API.Validators;
+
+public static class PedidoValidator
 {
-    [Required(ErrorMessage = "El ClienteId es obligatorio")]
-    public int ClienteId { get; set; }
+    public static List<string> Validar(CreatePedidoDto dto)
+    {
+        var errores = new List<string>();
 
-    [Required(ErrorMessage = "Debe incluir al menos una pizza")]
-    [MinLength(1, ErrorMessage = "El pedido debe tener al menos una pizza")]
-    public List<PizzaPedidoCreateDto> Pizzas { get; set; } = new();
+        if (dto.IdCliente <= 0)
+            errores.Add("Debe indicar un cliente válido.");
 
-    [StringLength(200, ErrorMessage = "Las observaciones no pueden superar los 200 caracteres")]
-    public string? Observaciones { get; set; }
+        if (dto.IdSucursal <= 0)
+            errores.Add("Debe indicar una sucursal válida.");
+
+        if (dto.Detalles is null || dto.Detalles.Count == 0)
+            errores.Add("El pedido debe tener al menos una pizza.");
+        else
+        {
+            foreach (var detalle in dto.Detalles)
+            {
+                if (detalle.Cantidad <= 0)
+                    errores.Add($"La cantidad para la pizza {detalle.IdPizza} debe ser mayor a 0.");
+            }
+        }
+
+        return errores;
+    }
 }

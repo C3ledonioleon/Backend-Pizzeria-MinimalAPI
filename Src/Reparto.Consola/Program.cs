@@ -1,6 +1,11 @@
-var builder = WebApplication.CreateBuilder(args);
-var app = builder.Build();
+using Reparto.Consola ;
 
-app.MapGet("/", () => "Hello World!");
+Console.Title = "Reparto";
 
-app.Run();
+Console.WriteLine("================================");
+Console.WriteLine(" Servicio Reparto iniciado");
+Console.WriteLine(" Puerto: 5001");
+Console.WriteLine("================================");
+
+var servidor = new SocketServer();
+await servidor.IniciarAsync();
