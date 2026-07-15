@@ -1,17 +1,17 @@
 
 # Integrantes: 
-  Celedonio, Leon Flores
-  Eric, Aguirre
+ * Celedonio, Leon Flores
+ * Eric, Aguirre
 
-# 🍕 Pizzeria API - Sistema Distribuido
+# Pizzeria API - Sistema Distribuido
 
 Sistema de gestión de pedidos para pizzería desarrollado como proyecto integrador de Software (ET12 DE1 - "Lib. Gral. José de San Martín"). Implementa una arquitectura distribuida con API REST y comunicación por sockets TCP entre servicios independientes.
 
-## 📋 Descripción
+## Descripción
 
 El sistema simula el flujo completo de una pizzería digital: un cliente realiza un pedido a través de una API REST, el backend lo registra en base de datos y notifica automáticamente al servicio de cocina mediante sockets. Una vez preparado el pedido, cocina notifica al servicio de reparto para la entrega, todo de forma asincrónica y con manejo de errores ante fallos de red.
 
-## 🏗️ Arquitectura
+## Arquitectura
 
 El proyecto está compuesto por 4 aplicaciones independientes que se comunican entre sí:
 
@@ -22,7 +22,7 @@ El proyecto está compuesto por 4 aplicaciones independientes que se comunican e
 | `Cocina.Consola` | Consola (Socket Server) | Recibe pedidos por socket, simula preparación | 6000 |
 | `Reparto.Consola` | Consola (Socket Server) | Recibe aviso de pedido listo, simula entrega | 6001 |
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - **.NET 8** - Framework principal
 - **C# Minimal API** - Backend REST
@@ -33,7 +33,7 @@ El proyecto está compuesto por 4 aplicaciones independientes que se comunican e
 - **Sockets TCP** - Comunicación entre servicios internos
 - **Async/Await** - Programación asincrónica en toda la solución
 
-## 📁 Estructura del proyecto
+## Estructura del proyecto
 
 ```
 Backend-Pizzeria-MinimalAPI/
@@ -78,7 +78,7 @@ Backend-Pizzeria-MinimalAPI/
 └── MinimalAPI.sln              # Solución principal del proyecto
 ```
 
-## 🗂️ Modelo de datos
+## Modelo de datos
 
 **Entidades principales:**
 - `Cliente` - Datos de contacto del comprador (sin autenticación)
@@ -88,7 +88,7 @@ Backend-Pizzeria-MinimalAPI/
 
 **Estados del pedido:**
 
-## 🚀 Cómo ejecutar el proyecto
+## Cómo ejecutar el proyecto
 
 ### Requisitos previos
 - .NET 8 SDK
@@ -154,13 +154,13 @@ Con `Pizzeria.API` corriendo, abrir en el navegador:
 | `PUT` | `/pedidos/{idPedido}/detalles/{idDetalle}` | Modifica un ítem del pedido |
 | `DELETE` | `/pedidos/{idPedido}/detalles/{idDetalle}` | Elimina un ítem del pedido |
 
-## 📡 Comunicación por sockets
+## Comunicación por sockets
 
 Cuando se crea un pedido (`POST /pedidos`), `Pizzeria.API` actúa como **cliente de socket** y notifica a `Cocina.Consola` (que actúa como **servidor**, escuchando en el puerto 6000). Una vez que cocina simula la preparación, notifica a su vez a `Reparto.Consola` (servidor en el puerto 6001) para simular la entrega.
 
 Si algún servicio de socket no está disponible, el sistema captura la excepción, informa por consola, y el pedido queda igualmente registrado en la base de datos (no se pierde información ante una caída de un servicio interno).
 
-## ⚠️ Manejo de errores
+## Manejo de errores
 
 - Validación de datos de entrada en cada endpoint antes de procesar la solicitud
 - Timeout de conexión (3 segundos) al notificar a servicios por socket
