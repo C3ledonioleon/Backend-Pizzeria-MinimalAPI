@@ -29,9 +29,28 @@ public class PedidoService : IPedidoService
         _detalleRepository = detalleRepository;
         _cocinaSocketClient = cocinaSocketClient;
     }
-    public Task<List<Pedido>> ObtenerTodosAsync() => _pedidoRepository.ObtenerTodosAsync();
+    public async Task<List<Pedido>> ObtenerTodosAsync()
+    {
+        var pedidos = await _pedidoRepository.ObtenerTodosAsync();
 
-    public Task<Pedido?> ObtenerPorIdAsync(int id) => _pedidoRepository.ObtenerPorIdAsync(id);
+        foreach (var pedido in pedidos)
+        {
+            pedido.Detalles = await _detalleRepository.ObtenerPorPedidoAsync(pedido.IdPedido);
+        }
+
+        return pedidos;
+    }
+    public async Task<Pedido?> ObtenerPorIdAsync(int id)
+    {
+        var pedido = await _pedidoRepository.ObtenerPorIdAsync(id);
+
+        if (pedido is null)
+            return null;
+
+        pedido.Detalles = await _detalleRepository.ObtenerPorPedidoAsync(id);
+
+        return pedido;
+    }
 
     public async Task<Pedido> CrearAsync(CreatePedidoDto dto)
     {
@@ -59,16 +78,26 @@ public class PedidoService : IPedidoService
 
         pedido.Total = total;
 
-        var pedidoCreado = await _pedidoRepository.CrearAsync(pedido);
+            var pedidoCreado = await _pedidoRepository.CrearAsync(pedido);
 
-        try
-        {
-            await _cocinaSocketClient.NotificarNuevoPedidoAsync(pedidoCreado);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[AVISO] No se pudo notificar a la cocina: {ex.Message}");
-        }
+            // Guardar los detalles en la base de datos
+            foreach (var detalle in pedido.Detalles)
+            {
+                detalle.IdPedido = pedidoCreado.IdPedido;
+                await _detalleRepository.AgregarAsync(detalle);
+            }
+
+            // Cargar nuevamente los detalles
+            pedidoCreado.Detalles = await _detalleRepository.ObtenerPorPedidoAsync(pedidoCreado.IdPedido);
+
+            try
+            {
+                await _cocinaSocketClient.NotificarNuevoPedidoAsync(pedidoCreado);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[AVISO] No se pudo notificar a la cocina: {ex.Message}");
+            }
 
         return pedidoCreado;
     }
@@ -100,9 +129,11 @@ public class PedidoService : IPedidoService
         var detalle = new DetallePedido(idPedido, dto.IdPizza, dto.Cantidad, pizza.Precio, dto.Observaciones);
         await _detalleRepository.AgregarAsync(detalle);
 
-        await RecalcularTotalAsync(idPedido);
-        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+       await RecalcularTotalAsync(idPedido);
+     return await ObtenerPorIdAsync(idPedido);
     }
+
+
 
     public async Task<Pedido?> ActualizarDetalleAsync(int idPedido, int idDetalle, ActualizarDetalleDto dto)
     {
@@ -111,7 +142,7 @@ public class PedidoService : IPedidoService
 
         await _detalleRepository.ActualizarAsync(idDetalle, dto.Cantidad, dto.Observaciones);
         await RecalcularTotalAsync(idPedido);
-        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+    return await ObtenerPorIdAsync(idPedido);
     }
 
     public async Task<Pedido?> EliminarDetalleAsync(int idPedido, int idDetalle)
@@ -121,7 +152,7 @@ public class PedidoService : IPedidoService
 
         await _detalleRepository.EliminarAsync(idDetalle);
         await RecalcularTotalAsync(idPedido);
-        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+        return await ObtenerPorIdAsync(idPedido);
     }
 
     private async Task RecalcularTotalAsync(int idPedido)
