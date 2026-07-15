@@ -7,16 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 
-// Data
-builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
-
-
-
 // Dependency Injection
 
 builder.Services.AddDependencies();
 
-
+// Endpoints 
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
@@ -38,7 +33,6 @@ var app = builder.Build();
 app.MapClienteEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
-
 
 app.UseSwagger();
 

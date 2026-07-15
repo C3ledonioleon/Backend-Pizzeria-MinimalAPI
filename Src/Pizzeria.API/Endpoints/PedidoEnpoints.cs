@@ -8,9 +8,8 @@ public static class PedidoEndpoints
     public static void MapPedidoEndpoints(this WebApplication app)
     {
         var pedido = app.MapGroup("/api/pedidos");
-
+        
         pedido.WithTags("Pedido");
-
 
         pedido.MapGet("/", async ( IPedidoService service) =>
         {

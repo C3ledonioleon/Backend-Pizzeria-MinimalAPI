@@ -1,3 +1,8 @@
+
+# Integrantes: 
+  Celedonio, Leon Flores
+  Eric, Aguirre
+
 # 🍕 Pizzeria API - Sistema Distribuido
 
 Sistema de gestión de pedidos para pizzería desarrollado como proyecto integrador de Software (ET12 DE1 - "Lib. Gral. José de San Martín"). Implementa una arquitectura distribuida con API REST y comunicación por sockets TCP entre servicios independientes.
@@ -28,30 +33,50 @@ El proyecto está compuesto por 4 aplicaciones independientes que se comunican e
 - **Sockets TCP** - Comunicación entre servicios internos
 - **Async/Await** - Programación asincrónica en toda la solución
 
-## 📦 Estructura del proyecto
+## 📁 Estructura del proyecto
 
-
+```
 Backend-Pizzeria-MinimalAPI/
+│
 ├── Scripts/
-│   ├── Script.sql              # Creación de tablas
-│   └── INSERT.sql              # Datos de ejemplo
+│   ├── Script.sql              # Script de creación de tablas
+│   └── INSERT.sql              # Datos iniciales de prueba
+│
 ├── Src/
-│   ├── Cliente.Consola/        # App de consola - cliente
-│   ├── Cocina.Consola/         # App de consola - cocina (socket server)
-│   ├── Reparto.Consola/        # App de consola - reparto (socket server)
-│   └── Pizzeria.API/
-│       ├── Enums/              # EstadoPedido, RolEmpleado
-│       ├── Models/              # Entidades del dominio
-│       ├── DTOs/                 # Objetos de transferencia de datos
-│       ├── Validators/          # Validaciones de entrada
-│       ├── Services/            # Lógica de negocio
-│       ├── Repositories/        # Acceso a datos con Dapper
-│       ├── Sockets/              # Clientes de comunicación por socket
-│       ├── Endpoints/           # Definición de rutas de la API
-│       ├── Data/                  # Fábrica de conexión a la base de datos
-│       └── Program.cs
-└── MinimalAPI.sln
-
+│   │
+│   ├── Cliente.Consola/        # Aplicación de consola para clientes
+│   │
+│   ├── Cocina.Consola/         # Aplicación de consola para cocina
+│   │                              (Servidor Socket)
+│   │
+│   ├── Reparto.Consola/        # Aplicación de consola para reparto
+│   │                              (Servidor Socket)
+│   │
+│   └── Pizzeria.API/           # Backend principal - Minimal API
+│       │
+│       ├── Enums/              # Enumeraciones del sistema
+│       │                         (EstadoPedido, RolEmpleado)
+│       │
+│       ├── Models/             # Entidades del dominio
+│       │
+│       ├── DTOs/               # Objetos de transferencia de datos
+│       │
+│       ├── Validators/         # Validaciones de datos de entrada
+│       │
+│       ├── Services/           # Lógica de negocio de la aplicación
+│       │
+│       ├── Repositories/       # Acceso a datos mediante Dapper
+│       │
+│       ├── Sockets/            # Comunicación mediante sockets
+│       │
+│       ├── Endpoints/          # Definición de endpoints de la API
+│       │
+│       ├── Data/               # Configuración y conexión a la base de datos
+│       │
+│       └── Program.cs          # Configuración principal de la API
+│
+└── MinimalAPI.sln              # Solución principal del proyecto
+```
 
 ## 🗂️ Modelo de datos
 
@@ -144,4 +169,4 @@ Si algún servicio de socket no está disponible, el sistema captura la excepci�
 
 ## 👤 Autor
 
-Proyecto desarrollado para la materia Software - 6to año - ET12 DE1
+Proyecto desarrollado para la materia Programacion Sobre Redes - 6to año - ET12 DE1

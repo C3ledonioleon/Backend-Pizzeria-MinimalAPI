@@ -14,15 +14,11 @@ public class PizzaService : IPizzaService
     {
         _repository = repository;
     }
-
-
     public Task<List<Pizza>> ObtenerTodasAsync()
         => _repository.ObtenerTodasAsync();
 
-
     public Task<Pizza?> ObtenerPorIdAsync(int id)
         => _repository.ObtenerPorIdAsync(id);
-
 
     public Task<Pizza> CrearAsync(CreatePizzaDto dto)
     {
@@ -50,7 +46,6 @@ public class PizzaService : IPizzaService
 
         return _repository.ActualizarAsync(id, pizza);
     }
-
 
     public Task<int> EliminarAsync(int id)
         => _repository.EliminarAsync(id);

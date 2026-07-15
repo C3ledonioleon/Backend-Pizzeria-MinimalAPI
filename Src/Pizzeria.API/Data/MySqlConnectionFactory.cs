@@ -9,7 +9,7 @@ public class MySqlConnectionFactory : IDbConnectionFactory
 
     public MySqlConnectionFactory(IConfiguration configuration)
     {
-        var candidates = new[] { "6to_Pizzeria", "DefaultConnection", "PizzeriaDB" };
+        var candidates = new[] { "6to_Pizzeria" };
         string? found = null;
         foreach (var name in candidates)
         {
@@ -20,7 +20,6 @@ public class MySqlConnectionFactory : IDbConnectionFactory
                 break;
             }
         }
-
         _connectionString = found ?? throw new InvalidOperationException($"No se encontró ninguna cadena de conexión en appsettings.json. Busqué: {string.Join(", ", candidates)}. Añade una entrada bajo 'ConnectionStrings'.");
     }
 

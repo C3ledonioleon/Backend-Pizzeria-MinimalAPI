@@ -20,12 +20,10 @@ public class ClienteService : IClienteService
         return await _repository.ObtenerTodosAsync();
     }
 
-
     public async Task<Cliente?> ObtenerPorIdAsync(int id)
     {
         return await _repository.ObtenerPorIdAsync(id);
     }
-
 
     public async Task<Cliente> CrearAsync(CreateClienteDto dto)
     {
@@ -39,7 +37,6 @@ public class ClienteService : IClienteService
 
         return await _repository.CrearAsync(cliente);
     }
-
 
     public async Task<bool> ActualizarAsync(int id, UpdateClienteDto dto)
     {
@@ -56,7 +53,6 @@ public class ClienteService : IClienteService
 
         return filas > 0;
     }
-
 
     public async Task<bool> EliminarAsync(int id)
     {

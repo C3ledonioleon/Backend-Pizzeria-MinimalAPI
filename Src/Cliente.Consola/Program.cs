@@ -1,7 +1,10 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 
-var http = new HttpClient { BaseAddress = new Uri("http://localhost:5260") };
+var http = new HttpClient
+{
+    BaseAddress = new Uri("http://localhost:5260")
+};
 
 Console.WriteLine("=== Pizzeria ===");
 
@@ -21,105 +24,172 @@ while (true)
 
     try
     {
-        if (opcion == "1")
+        switch (opcion)
         {
-            Console.Write("Nombre: ");
-            var nombre = Console.ReadLine();
-            Console.Write("Apellido: ");
-            var apellido = Console.ReadLine();
-            Console.Write("Email: ");
-            var email = Console.ReadLine();
-            Console.Write("Telefono: ");
-            var telefono = Console.ReadLine();
-            Console.Write("Direccion: ");
-            var direccion = Console.ReadLine();
+            case "1":
+                Console.Write("Nombre: ");
+                var nombre = Console.ReadLine();
 
-            var body = new { nombre, apellido, email, telefono, direccion };
-            var respuesta = await http.PostAsJsonAsync("/clientes", body);
-            var cliente = await respuesta.Content.ReadFromJsonAsync<JsonElement>();
+                Console.Write("Apellido: ");
+                var apellido = Console.ReadLine();
 
-            idClienteActual = cliente.GetProperty("idCliente").GetInt32();
-            Console.WriteLine($"Cliente creado con id {idClienteActual}.");
-        }
-        else if (opcion == "2")
-        {
-            var pizzas = await http.GetFromJsonAsync<List<JsonElement>>("/pizzas");
-            Console.WriteLine();
-            foreach (var pizza in pizzas!)
-            {
-                Console.WriteLine($"[{pizza.GetProperty("idPizza")}] {pizza.GetProperty("nombre")} - ${pizza.GetProperty("precio")}");
-            }
-        }
-        else if (opcion == "3")
-        {
-            if (idClienteActual is null)
-            {
-                Console.Write("Ingresa tu IdCliente: ");
-                idClienteActual = int.Parse(Console.ReadLine()!);
-            }
+                Console.Write("Email: ");
+                var email = Console.ReadLine();
 
-            var detalles = new List<object>();
+                Console.Write("Telefono: ");
+                var telefono = Console.ReadLine();
 
-            while (true)
-            {
-                var pizzas = await http.GetFromJsonAsync<List<JsonElement>>("/pizzas");
-                Console.WriteLine();
-                foreach (var pizza in pizzas!)
+                Console.Write("Direccion: ");
+                var direccion = Console.ReadLine();
+
+                var clienteBody = new{ nombre,apellido,email,telefono,direccion };
+
+                var respuestaCliente =
+                    await http.PostAsJsonAsync("/api/clientes", clienteBody);
+
+                var contenidoCliente =
+                    await respuestaCliente.Content.ReadAsStringAsync();
+
+                if (!respuestaCliente.IsSuccessStatusCode)
                 {
-                    Console.WriteLine($"[{pizza.GetProperty("idPizza")}] {pizza.GetProperty("nombre")} - ${pizza.GetProperty("precio")}");
+                    Console.WriteLine(contenidoCliente);
+                    break;
                 }
 
-                Console.Write("Id de la pizza (0 para terminar): ");
-                var idPizza = int.Parse(Console.ReadLine()!);
-                if (idPizza == 0) break;
+                var cliente =
+                    JsonSerializer.Deserialize<JsonElement>(contenidoCliente);
 
-                Console.Write("Cantidad: ");
-                var cantidad = int.Parse(Console.ReadLine()!);
+                idClienteActual =
+                    cliente.GetProperty("idCliente").GetInt32();
 
-                Console.Write("Observaciones (opcional): ");
-                var observaciones = Console.ReadLine();
+                Console.WriteLine( $"Cliente creado con id {idClienteActual}");
+                
+                break;
 
-                detalles.Add(new { idPizza, cantidad, observaciones });
-            }
+            case "2":
 
-            if (detalles.Count == 0)
-            {
-                Console.WriteLine("Pedido cancelado, no tenia items.");
-                continue;
-            }
+                var pizzas =
+                    await http.GetFromJsonAsync<List<JsonElement>>( "/api/pizzas");
 
-            var pedidoBody = new { idCliente = idClienteActual, detalles };
-            var respuesta = await http.PostAsJsonAsync("/pedidos", pedidoBody);
+                foreach (var pizza in pizzas!)
+                {
+                    Console.WriteLine(
+                        $"[{pizza.GetProperty("idPizza")}] " +
+                        $"{pizza.GetProperty("nombre")} - " +
+                        $"${pizza.GetProperty("precio")}");
+                }
 
-            if (!respuesta.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"Error: {await respuesta.Content.ReadAsStringAsync()}");
-                continue;
-            }
+                break;
 
-            var pedido = await respuesta.Content.ReadFromJsonAsync<JsonElement>();
-            Console.WriteLine($"Pedido #{pedido.GetProperty("idPedido")} creado. Total: ${pedido.GetProperty("total")}");
-        }
-        else if (opcion == "4")
-        {
-            var pedidos = await http.GetFromJsonAsync<List<JsonElement>>("/pedidos");
-            Console.WriteLine();
-            foreach (var pedido in pedidos!)
-            {
-                Console.WriteLine($"Pedido #{pedido.GetProperty("idPedido")} - Cliente {pedido.GetProperty("idCliente")} - Estado: {pedido.GetProperty("estado")} - Total: ${pedido.GetProperty("total")}");
-            }
-        }
-        else if (opcion == "5")
-        {
-            break;
-        }
-        else
-        {
-            Console.WriteLine("Opcion invalida.");
+            case "3":
+
+                if (idClienteActual is null)
+                {
+                    Console.Write("Id Cliente: ");
+                    idClienteActual =
+                        int.Parse(Console.ReadLine()!);
+                }
+
+                var detalles = new List<object>();
+
+                while (true)
+                {
+                    var listaPizzas =
+                        await http.GetFromJsonAsync<List<JsonElement>>(
+                            "/api/pizzas");
+
+                    Console.WriteLine();
+
+                    foreach (var pizza in listaPizzas!)
+                    {
+                        Console.WriteLine(
+                            $"[{pizza.GetProperty("idPizza")}] " +
+                            $"{pizza.GetProperty("nombre")} - " +
+                            $"${pizza.GetProperty("precio")}");
+                    }
+
+                    Console.Write(
+                        "Id Pizza (0 terminar): ");
+
+                    var idPizza =
+                        int.Parse(Console.ReadLine()!);
+
+                    if (idPizza == 0)
+                        break;
+
+                    Console.Write("Cantidad: ");
+
+                    var cantidad =
+                        int.Parse(Console.ReadLine()!);
+
+                    Console.Write("Observaciones: ");
+
+                    var observaciones =
+                        Console.ReadLine();
+
+                    detalles.Add(new
+                    {
+                        idPizza,
+                        cantidad,
+                        observaciones
+                    });
+                }
+
+                if (detalles.Count == 0)
+                {
+                    Console.WriteLine(
+                        "Pedido cancelado");
+                    break;
+                }
+
+                var pedidoBody = new {idCliente = idClienteActual,detalles};
+
+                var respuestaPedido = await http.PostAsJsonAsync("/api/pedidos",pedidoBody);
+
+                var contenidoPedido =
+                    await respuestaPedido.Content.ReadAsStringAsync();
+
+                if (!respuestaPedido.IsSuccessStatusCode)
+                {
+                    Console.WriteLine(
+                        contenidoPedido);
+                    break;
+                }
+                var pedido = JsonSerializer.Deserialize<JsonElement>(contenidoPedido);
+
+                Console.WriteLine($"Pedido #{pedido.GetProperty("idPedido")} creado");
+                
+                Console.WriteLine($"Total: ${pedido.GetProperty("total")}");
+
+                break;
+            case "4":
+
+                var pedidos =
+                    await http.GetFromJsonAsync<List<JsonElement>>(
+                        "/api/pedidos");
+
+                foreach (var p in pedidos!)
+                {
+                    Console.WriteLine(
+                        $"Pedido #{p.GetProperty("idPedido")} - " +
+                        $"Cliente {p.GetProperty("idCliente")} - " +
+                        $"Estado {p.GetProperty("estado")} - " +
+                        $"Total ${p.GetProperty("total")}");
+                }
+
+                break;
+
+            case "5":
+                return;
+
+            default:
+                Console.WriteLine("Opcion invalida");
+                break;
         }
     }
-    catch (Exception ex)
+    catch(Exception ex)
     {
-        Console.WriteLine($"Error: {ex.Message}");
+        Console.WriteLine(
+            $"Error: {ex.Message}");
     }
 }

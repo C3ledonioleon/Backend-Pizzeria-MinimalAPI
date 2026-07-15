@@ -1,3 +1,4 @@
+using Pizzeria.API.Data;
 using Pizzeria.API.Repositories;
 using Pizzeria.API.Repositories.IRepositories;
 using Pizzeria.API.Services;
@@ -10,6 +11,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDependencies(this IServiceCollection services)
     {
+        
+        // Data
+        services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
+
+
         // Repositories
         services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped<IClienteRepository, ClienteRepository>();
@@ -22,10 +28,8 @@ public static class DependencyInjection
         services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<IPizzaService, PizzaService>();
 
-
         // Socket cocina
         services.AddSingleton<CocinaSocketClient>();
-
 
         return services;
     }
