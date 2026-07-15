@@ -1,6 +1,5 @@
 using Pizzeria.API.DTOs;
-using Pizzeria.API.Services;
-using Pizzeria.API.Validators;
+using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints;
 
@@ -8,27 +7,64 @@ public static class ClienteEndpoints
 {
     public static void MapClienteEndpoints(this WebApplication app)
     {
-        var grupo = app.MapGroup("/clientes");
-        grupo.WithTags("Clientes");
+        var cliente = app.MapGroup("/api/clientes");
 
-        grupo.MapGet("/", (ClienteService service) =>
-            Results.Ok(service.ObtenerTodos()));
+        cliente.WithTags("Cliente");
 
-        grupo.MapGet("/{id}", (int id, ClienteService service) =>
+
+        cliente.MapGet("/", async (IClienteService service) =>
         {
-            var cliente = service.ObtenerPorId(id);
-            return cliente is not null ? Results.Ok(cliente) : Results.NotFound();
+            var clientes = await service.ObtenerTodosAsync();
+            return Results.Ok(clientes);
         });
 
-        grupo.MapPost("/", (CreateClienteDto dto, ClienteService service) =>
-        {
-            var errores = ClienteValidator.Validar(dto);
-            if (errores.Count > 0)
-                return Results.BadRequest(errores);
 
-            var cliente = service.Crear(dto);
-            return Results.Created($"/clientes/{cliente.IdCliente}", cliente);
+        cliente.MapGet("/{id:int}", async (
+            int id,
+            IClienteService service) =>
+        {
+            var cliente = await service.ObtenerPorIdAsync(id);
+
+            return cliente is null
+                ? Results.NotFound()
+                : Results.Ok(cliente);
+        });
+
+
+        cliente.MapPost("/", async (
+            CreateClienteDto dto,
+            IClienteService service) =>
+        {
+            var cliente = await service.CrearAsync(dto);
+
+            return Results.Created(
+                $"/api/clientes/{cliente.IdCliente}",
+                cliente);
+        });
+
+
+        cliente.MapPut("/{id:int}", async (
+            int id,
+            UpdateClienteDto dto,
+            IClienteService service) =>
+        {
+            var actualizado = await service.ActualizarAsync(id, dto);
+
+            return actualizado
+                ? Results.Ok()
+                : Results.NotFound();
+        });
+
+
+        cliente.MapDelete("/{id:int}", async (
+            int id,
+            IClienteService service) =>
+        {
+            var eliminado = await service.EliminarAsync(id);
+
+            return eliminado
+                ? Results.Ok()
+                : Results.NotFound();
         });
     }
 }
-

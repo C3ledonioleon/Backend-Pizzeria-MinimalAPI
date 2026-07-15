@@ -37,15 +37,15 @@ public class SocketServer
         var bytesLeidos = await stream.ReadAsync(buffer);
 
         var mensaje = Encoding.UTF8.GetString(buffer, 0, bytesLeidos);
-        Console.WriteLine($"[Reparto] Mensaje recibido: {mensaje}");
 
         try
         {
             using var doc = JsonDocument.Parse(mensaje);
             var idPedido = doc.RootElement.GetProperty("IdPedido").GetInt32();
 
+            Console.WriteLine();
             Console.WriteLine($"[Reparto] Saliendo a entregar pedido #{idPedido}...");
-            await Task.Delay(2000);
+            await Task.Delay(3000);
             Console.WriteLine($"[Reparto] Pedido #{idPedido} entregado.");
         }
         catch (JsonException ex)

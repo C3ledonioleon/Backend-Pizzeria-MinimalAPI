@@ -1,13 +1,14 @@
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Enums;
 using Pizzeria.API.Models;
-using Pizzeria.API.Repositories.IRepositories;
+using Pizzeria.API.Services.IServices;
 using Pizzeria.API.Sockets;
+using Pizzeria.API.Repositories.IRepositories;
 
 
 namespace Pizzeria.API.Services;
 
-public class PedidoService
+public class PedidoService : IPedidoService
 {
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IClienteRepository _clienteRepository;
@@ -15,19 +16,6 @@ public class PedidoService
     private readonly IDetallePedidoRepository _detalleRepository;
     private readonly CocinaSocketClient _cocinaSocketClient;
 
-    public PedidoService(
-        IPedidoRepository pedidoRepository,
-        IClienteRepository clienteRepository,
-        IPizzaRepository pizzaRepository,
-        IDetallePedidoRepository detalleRepository,
-        CocinaSocketClient cocinaSocketClient)
-    {
-        _pedidoRepository = pedidoRepository;
-        _clienteRepository = clienteRepository;
-        _pizzaRepository = pizzaRepository;
-        _detalleRepository = detalleRepository;
-        _cocinaSocketClient = cocinaSocketClient;
-    }
 
     public Task<List<Pedido>> ObtenerTodosAsync() => _pedidoRepository.ObtenerTodosAsync();
 

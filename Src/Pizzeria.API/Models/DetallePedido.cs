@@ -12,11 +12,11 @@ namespace Pizzeria.API.Models
         public int IdPizza { get; set; }       
         public int Cantidad { get; set; }
         public decimal PrecioUnitario { get; set; }
-        public string? Observaciones { get; set; }     // ej: "sin aceitunas"
+        public string Observaciones { get; set; }     // ej: "sin aceitunas"
 
-    public DetallePedido() { }
+        public DetallePedido() { }
 
-        public DetallePedido(int idPedido, int idPizza, int cantidad, decimal precioUnitario, string? observaciones = null)
+        public DetallePedido(int idPedido, int idPizza, int cantidad, decimal precioUnitario, string observaciones )
         {
             IdPedido = idPedido;
             IdPizza = idPizza;

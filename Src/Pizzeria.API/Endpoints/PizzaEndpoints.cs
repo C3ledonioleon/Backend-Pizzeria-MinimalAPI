@@ -1,49 +1,58 @@
 using Pizzeria.API.DTOs;
-using Pizzeria.API.Services;
-using Pizzeria.API.Validators;
+using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints;
-
 public static class PizzaEndpoints
 {
     public static void MapPizzaEndpoints(this WebApplication app)
     {
-        var grupo = app.MapGroup("/pizzas");
-        grupo.WithTags("Pizzas");
-        
-        grupo.MapGet("/", async (PizzaService service) =>
-            Results.Ok(await service.ObtenerTodasAsync()));
+        var pizza = app.MapGroup("/api/pizzas");
 
-        grupo.MapGet("/{id}", async (int id, PizzaService service) =>
+        pizza.WithTags("Pizza");
+
+        pizza.MapGet("/", async (IPizzaService service) =>
+        {
+            var pizzas = await service.ObtenerTodasAsync();
+
+            return Results.Ok(pizzas);
+        });
+
+        pizza.MapGet("/{id:int}", async (int id, IPizzaService service) =>
         {
             var pizza = await service.ObtenerPorIdAsync(id);
-            return pizza is not null ? Results.Ok(pizza) : Results.NotFound();
+
+            return pizza is null
+                ? Results.NotFound()
+                : Results.Ok(pizza);
         });
 
-        grupo.MapPost("/", async (CreatePizzaDto dto, PizzaService service) =>
+        pizza.MapPost("/", async ( CreatePizzaDto dto, IPizzaService service) =>
         {
-            var errores = PizzaValidator.Validar(dto);
-            if (errores.Count > 0)
-                return Results.BadRequest(errores);
-
             var pizza = await service.CrearAsync(dto);
-            return Results.Created($"/pizzas/{pizza.IdPizza}", pizza);
+
+            return Results.Created(
+                $"/api/pizzas/{pizza.IdPizza}",
+                pizza);
         });
 
-        grupo.MapPut("/{id}", async (int id, CreatePizzaDto dto, PizzaService service) =>
-        {
-            var errores = PizzaValidator.Validar(dto);
-            if (errores.Count > 0)
-                return Results.BadRequest(errores);
 
-            var filasAfectadas = await service.ActualizarAsync(id, dto);
-            return filasAfectadas > 0 ? Results.NoContent() : Results.NotFound();
+
+        pizza.MapPut("/{id:int}", async ( int id, CreatePizzaDto dto, IPizzaService service) =>
+        {
+            var filas = await service.ActualizarAsync(id, dto);
+
+            return filas > 0
+                ? Results.Ok()
+                : Results.NotFound();
         });
 
-        grupo.MapDelete("/{id}", async (int id, PizzaService service) =>
+        pizza.MapDelete("/{id:int}", async (int id, IPizzaService service) =>
         {
-            var filasAfectadas = await service.EliminarAsync(id);
-            return filasAfectadas > 0 ? Results.NoContent() : Results.NotFound();
+            var filas = await service.EliminarAsync(id);
+
+            return filas > 0
+                ? Results.Ok()
+                : Results.NotFound();
         });
     }
 }

@@ -9,6 +9,7 @@ public class SocketServer
 {
     private const int Puerto = 6000;
     private TcpListener? _listener;
+    private readonly RepartoSocketClient _repartoClient = new();
 
     public async Task IniciarAsync()
     {
@@ -25,7 +26,7 @@ public class SocketServer
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[Cocina] Error al procesar conexión: {ex.Message}");
+                Console.WriteLine($"[Cocina] Error al procesar conexion: {ex.Message}");
             }
         }
     }
@@ -37,18 +38,34 @@ public class SocketServer
         var bytesLeidos = await stream.ReadAsync(buffer);
 
         var mensaje = Encoding.UTF8.GetString(buffer, 0, bytesLeidos);
-        Console.WriteLine($"[Cocina] Pedido recibido: {mensaje}");
 
         try
         {
             using var doc = JsonDocument.Parse(mensaje);
-            var idPedido = doc.RootElement.GetProperty("IdPedido").GetInt32();
+            var root = doc.RootElement;
+
+            var idPedido = root.GetProperty("IdPedido").GetInt32();
+            var idCliente = root.GetProperty("IdCliente").GetInt32();
+            var total = root.GetProperty("Total").GetDecimal();
+
+            Console.WriteLine();
+            Console.WriteLine($"[Cocina] Nuevo pedido #{idPedido} del cliente #{idCliente} - Total: ${total}");
+
+            if (root.TryGetProperty("Detalles", out var detalles))
+            {
+                foreach (var detalle in detalles.EnumerateArray())
+                {
+                    var idPizza = detalle.GetProperty("IdPizza").GetInt32();
+                    var cantidad = detalle.GetProperty("Cantidad").GetInt32();
+                    Console.WriteLine($"  - Pizza #{idPizza} x{cantidad}");
+                }
+            }
 
             Console.WriteLine($"[Cocina] Preparando pedido #{idPedido}...");
-            await Task.Delay(2000); // simula tiempo de preparación
-            Console.WriteLine($"[Cocina] Pedido #{idPedido} listo. Pasa a reparto.");
+            await Task.Delay(3000);
+            Console.WriteLine($"[Cocina] Pedido #{idPedido} listo. Avisando a Reparto...");
 
-            // Acá, más adelante, se podría avisar a Reparto.Consola con el mismo patrón.
+            await _repartoClient.NotificarPedidoListoAsync(mensaje);
         }
         catch (JsonException ex)
         {

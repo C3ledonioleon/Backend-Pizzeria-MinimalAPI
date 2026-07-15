@@ -1,54 +1,53 @@
 using Pizzeria.API.Endpoints;
-using Pizzeria.API.Services;
-using Pizzeria.API.Sockets;
 using Pizzeria.API.Data;
-using Pizzeria.API.Repositories;
-using Pizzeria.API.Repositories.IRepositories;
+using Pizzeria.API.DependencyInjection;
 using Scalar.AspNetCore;
-using Pizzeria.API.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// =======================
-// Registro de servicios
-// =======================
-// Data / repositories
+
+
+// Data
 builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IPizzaRepository, PizzaRepository>();
-builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
-builder.Services.AddScoped<IDetallePedidoRepository, DetallePedidoRepository>();
 
-// Application services (scoped)
-builder.Services.AddScoped<ClienteService>();
-builder.Services.AddScoped<PizzaService>();
-builder.Services.AddScoped<PedidoService>();
 
-// Sockets/clients
-builder.Services.AddSingleton<CocinaSocketClient>();
+
+// Dependency Injection
+
+builder.Services.AddDependencies();
+
 
 builder.Services.AddEndpointsApiExplorer();
 
-// Configure Swagger/OpenAPI (used by Scalar)
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SchemaFilter<EjemplosSchemaFilter>();
+    options.SupportNonNullableReferenceTypes();
+
+    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    {
+        Title = "Pizzeria API",
+        Version = "v1",
+        Description = "API para la gestión de pedidos de una pizzería.",
+    });
 });
 
 var app = builder.Build();
 
-// =======================
-// Endpoints (registrar antes de generar el JSON OpenAPI)
-// =======================
+// Endpoints
+
 app.MapClienteEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
 
-// Servir solo el JSON OpenAPI (no mostrar Swagger UI)
+
 app.UseSwagger();
 
-// Map Scalar and point it at the Swagger JSON produced by Swashbuckle
-app.MapScalarApiReference(options => options.WithOpenApiRoutePattern("/swagger/v1/swagger.json"));
+
+app.MapScalarApiReference(options =>
+    options.WithOpenApiRoutePattern("/swagger/v1/swagger.json"));
+
+
 app.MapGet("/", () => Results.Redirect("/scalar", false));
+
 
 app.Run();

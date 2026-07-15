@@ -1,4 +1,4 @@
-USE 6to_Pizzeria;
+USE `6to_Pizzeria`;
 
 -- =========================
 -- CLIENTES

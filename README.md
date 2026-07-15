@@ -1,225 +1,147 @@
-<h1 align="center">E.T. Nº12 D.E. 1º "Libertador Gral. José de San Martín"</h1>
-<p align="center">
-  <img src="https://et12.edu.ar/imgs/computacion/vamoaprogramabanner.png">
-</p>
+# 🍕 Pizzeria API - Sistema Distribuido
 
-# Pizzería API - Minimal API
+Sistema de gestión de pedidos para pizzería desarrollado como proyecto integrador de Software (ET12 DE1 - "Lib. Gral. José de San Martín"). Implementa una arquitectura distribuida con API REST y comunicación por sockets TCP entre servicios independientes.
 
-Proyecto desarrollado para la materia Programación Sobre Redes de la Escuela Técnica N.º 12 D.E. 1.
+## 📋 Descripción
 
-## Descripción
+El sistema simula el flujo completo de una pizzería digital: un cliente realiza un pedido a través de una API REST, el backend lo registra en base de datos y notifica automáticamente al servicio de cocina mediante sockets. Una vez preparado el pedido, cocina notifica al servicio de reparto para la entrega, todo de forma asincrónica y con manejo de errores ante fallos de red.
 
-Este proyecto implementa una **API REST** utilizando **ASP.NET Core Minimal API** para simular el funcionamiento de una pizzería digital.
+## 🏗️ Arquitectura
 
-La aplicación permite que un cliente realice pedidos de pizza, los cuales son procesados por un backend encargado de administrar la lógica de negocio y comunicarse con servicios internos mediante sockets.
+El proyecto está compuesto por 4 aplicaciones independientes que se comunican entre sí:
 
-Además, se aplican conceptos de:
+| Proyecto | Tipo | Función | Puerto |
+|---|---|---|---|
+| `Pizzeria.API` | Web API (Minimal API) | Backend central: gestiona clientes, pizzas, pedidos y persistencia | 5260 |
+| `Cliente.Consola` | Consola | Simula al cliente final que realiza pedidos vía HTTP | - |
+| `Cocina.Consola` | Consola (Socket Server) | Recibe pedidos por socket, simula preparación | 6000 |
+| `Reparto.Consola` | Consola (Socket Server) | Recibe aviso de pedido listo, simula entrega | 6001 |
 
-- APIs REST
-- Programación distribuida
-- Comunicación mediante sockets
-- Programación asincrónica
-- Manejo de excepciones
-- Arquitectura Cliente-Servidor
+## 🛠️ Tecnologías
 
----
+- **.NET 8** - Framework principal
+- **C# Minimal API** - Backend REST
+- **MySQL** - Base de datos relacional
+- **Dapper** - Micro ORM para acceso a datos
+- **MySqlConnector** - Driver de conexión a MySQL
+- **Scalar** - Documentación interactiva de la API
+- **Sockets TCP** - Comunicación entre servicios internos
+- **Async/Await** - Programación asincrónica en toda la solución
 
-# Objetivos
+## 📦 Estructura del proyecto
 
-- Desarrollar una API REST utilizando Minimal API.
-- Aplicar una arquitectura distribuida.
-- Implementar comunicación entre módulos mediante sockets.
-- Gestionar pedidos de pizzas.
-- Aplicar programación asincrónica.
-- Implementar manejo de errores en escenarios distribuidos.
 
----
+Backend-Pizzeria-MinimalAPI/
+├── Scripts/
+│   ├── Script.sql              # Creación de tablas
+│   └── INSERT.sql              # Datos de ejemplo
+├── Src/
+│   ├── Cliente.Consola/        # App de consola - cliente
+│   ├── Cocina.Consola/         # App de consola - cocina (socket server)
+│   ├── Reparto.Consola/        # App de consola - reparto (socket server)
+│   └── Pizzeria.API/
+│       ├── Enums/              # EstadoPedido, RolEmpleado
+│       ├── Models/              # Entidades del dominio
+│       ├── DTOs/                 # Objetos de transferencia de datos
+│       ├── Validators/          # Validaciones de entrada
+│       ├── Services/            # Lógica de negocio
+│       ├── Repositories/        # Acceso a datos con Dapper
+│       ├── Sockets/              # Clientes de comunicación por socket
+│       ├── Endpoints/           # Definición de rutas de la API
+│       ├── Data/                  # Fábrica de conexión a la base de datos
+│       └── Program.cs
+└── MinimalAPI.sln
 
-# Tecnologías utilizadas
 
-- C#
-- .NET 9
-- ASP.NET Core Minimal API
-- Swagger / OpenAPI
-- Sockets TCP
-- Visual Studio 2022
-- Git
-- GitHub
+## 🗂️ Modelo de datos
 
----
+**Entidades principales:**
+- `Cliente` - Datos de contacto del comprador (sin autenticación)
+- `Pizza` - Productos del menú
+- `Pedido` - Cabecera del pedido (fecha, estado, cliente, total)
+- `DetallePedido` - Ítems del pedido (pizza, cantidad, precio congelado)
 
-# Estructura del proyecto
+**Estados del pedido:**
 
-```
-Pizzeria.API
-│
-├── Endpoints/
-├── Models/
-├── Services/
-├── Sockets/
-├── DTOs/
-├── Program.cs
-└── appsettings.json
-```
+## 🚀 Cómo ejecutar el proyecto
 
----
+### Requisitos previos
+- .NET 8 SDK
+- MySQL Server corriendo localmente
 
-# Estados del pedido
+### 1. Base de datos
 
-Los pedidos pueden encontrarse en alguno de los siguientes estados:
-
-- Espera de confirmación
-- En preparación
-- En viaje
-- Entregado
-- Cancelado
-
----
-
-# Endpoints
-
-## Obtener todas las pizzas
-
-```
-GET /pizzas
+Ejecutar en MySQL, en este orden:
+```bash
+mysql -u root -p < Scripts/Script.sql
+mysql -u root -p < Scripts/INSERT.sql
 ```
 
----
+### 2. Configurar la cadena de conexión
 
-## Obtener una pizza
-
-```
-GET /pizzas/{id}
-```
-
----
-
-## Crear un pedido
-
-```
-POST /pedidos
+En `Src/Pizzeria.API/appsettings.json`, ajustar usuario y contraseña reales:
+```json
+{
+  "ConnectionStrings": {
+    "PizzeriaDB": "Server=localhost;Port=3306;Database=PizzeriaDB;User=root;Password=;"
+  }
+}
 ```
 
----
-
-## Obtener pedidos
-
-```
-GET /pedidos
-```
-
----
-
-## Actualizar estado del pedido
-
-```
-PUT /pedidos/{id}/estado
-```
-
----
-
-# Arquitectura
-
-```
-Cliente
-   │
-   ▼
-Minimal API
-   │
-   ├────────────► Servicio Cocina (Sockets)
-   │
-   └────────────► Servicio Reparto (Sockets)
-```
-
----
-
-# Flujo del sistema
-
-1. El cliente realiza un pedido.
-2. La API valida la información.
-3. Se registra el pedido.
-4. Se envía la solicitud al servicio de cocina.
-5. La cocina confirma la preparación.
-6. El pedido pasa al servicio de reparto.
-7. Finalmente se entrega al cliente.
-
----
-
-# Manejo de errores
-
-La aplicación contempla situaciones como:
-
-- Pedido inexistente.
-- Pizza inexistente.
-- Error de comunicación con la cocina.
-- Error de conexión por sockets.
-- Excepciones en procesos asincrónicos.
-- Validaciones de datos.
-
----
-
-# Pruebas
-
-La API puede probarse utilizando:
-
-- Swagger o Scalar
-- Postman
-
----
-
-# Cómo ejecutar
-
-## Clonar el repositorio
+### 3. Levantar los servicios (en este orden, cada uno en su propia terminal)
 
 ```bash
-git clone https://github.com/usuario/Pizzeria.API.git
-```
+# Terminal 1
+cd Src/Cocina.Consola
+dotnet run
 
-## Ingresar al proyecto
+# Terminal 2
+cd Src/Reparto.Consola
+dotnet run
 
-```bash
-cd Pizzeria.API
-```
+# Terminal 3
+cd Src/Pizzeria.API
+dotnet run
 
-## Restaurar paquetes
-
-```bash
-dotnet restore
-```
-
-## Ejecutar
-
-```bash
+# Terminal 4
+cd Src/Cliente.Consola
 dotnet run
 ```
 
-Luego abrir:
+### 4. Probar la API directamente
 
-```
-https://localhost:5001/swagger o https://localhost:5001/scalar  
-```
+Con `Pizzeria.API` corriendo, abrir en el navegador:
 
----
+## 🔌 Endpoints principales
 
-# Conceptos aplicados
+| Método | Ruta | Descripción |
+|---|---|---|
+| `GET` | `/clientes` | Lista todos los clientes |
+| `POST` | `/clientes` | Crea un cliente nuevo |
+| `PUT` | `/clientes/{id}` | Actualiza un cliente |
+| `DELETE` | `/clientes/{id}` | Elimina un cliente |
+| `GET` | `/pizzas` | Lista el menú de pizzas |
+| `POST` | `/pizzas` | Crea una pizza nueva |
+| `GET` | `/pedidos` | Lista todos los pedidos |
+| `POST` | `/pedidos` | Crea un pedido con sus detalles |
+| `PUT` | `/pedidos/{id}/estado` | Cambia el estado de un pedido |
+| `POST` | `/pedidos/{idPedido}/detalles` | Agrega un ítem a un pedido existente |
+| `PUT` | `/pedidos/{idPedido}/detalles/{idDetalle}` | Modifica un ítem del pedido |
+| `DELETE` | `/pedidos/{idPedido}/detalles/{idDetalle}` | Elimina un ítem del pedido |
 
-- Arquitectura Cliente-Servidor
-- Minimal API
-- API REST
-- Programación Distribuida
-- Comunicación mediante Sockets
-- Programación Asincrónica
-- Manejo de Excepciones
-- Buenas prácticas de desarrollo
+## 📡 Comunicación por sockets
 
----
+Cuando se crea un pedido (`POST /pedidos`), `Pizzeria.API` actúa como **cliente de socket** y notifica a `Cocina.Consola` (que actúa como **servidor**, escuchando en el puerto 6000). Una vez que cocina simula la preparación, notifica a su vez a `Reparto.Consola` (servidor en el puerto 6001) para simular la entrega.
 
-# Autores
+Si algún servicio de socket no está disponible, el sistema captura la excepción, informa por consola, y el pedido queda igualmente registrado en la base de datos (no se pierde información ante una caída de un servicio interno).
 
-Eric Aguirre y Celedonio Leon Flores
+## ⚠️ Manejo de errores
 
-Escuela Técnica N.º 12 D.E. 1
+- Validación de datos de entrada en cada endpoint antes de procesar la solicitud
+- Timeout de conexión (3 segundos) al notificar a servicios por socket
+- Captura de excepciones de red sin interrumpir el flujo principal del pedido
+- Respuestas HTTP semánticas (`400`, `404`, `201`) según el resultado de cada operación
 
-Materia: Programación Sobre Redes
+## 👤 Autor
 
-Docente: Luis Durán
+Proyecto desarrollado para la materia Software - 6to año - ET12 DE1

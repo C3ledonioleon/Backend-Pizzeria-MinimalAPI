@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS  6to_Pizzeria;
-CREATE DATABASE  6to_Pizzeria ;
-USE 6to_Pizzeria ;
+DROP DATABASE IF EXISTS `6to_Pizzeria`;
+CREATE DATABASE `6to_Pizzeria`;
+USE `6to_Pizzeria`;
 
 
 
