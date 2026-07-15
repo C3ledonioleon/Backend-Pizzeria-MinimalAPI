@@ -9,7 +9,8 @@ public static class PizzaEndpoints
     public static void MapPizzaEndpoints(this WebApplication app)
     {
         var grupo = app.MapGroup("/pizzas");
-
+        grupo.WithTags("Pizzas");
+        
         grupo.MapGet("/", async (PizzaService service) =>
             Results.Ok(await service.ObtenerTodasAsync()));
 

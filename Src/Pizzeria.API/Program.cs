@@ -5,6 +5,7 @@ using Pizzeria.API.Data;
 using Pizzeria.API.Repositories;
 using Pizzeria.API.Repositories.IRepositories;
 using Scalar.AspNetCore;
+using Pizzeria.API.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddSingleton<IDbConnectionFactory, MySqlConnectionFactory>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IPizzaRepository, PizzaRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IDetallePedidoRepository, DetallePedidoRepository>();
 
 // Application services (scoped)
 builder.Services.AddScoped<ClienteService>();
@@ -28,7 +30,10 @@ builder.Services.AddSingleton<CocinaSocketClient>();
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure Swagger/OpenAPI (used by Scalar)
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SchemaFilter<EjemplosSchemaFilter>();
+});
 
 var app = builder.Build();
 

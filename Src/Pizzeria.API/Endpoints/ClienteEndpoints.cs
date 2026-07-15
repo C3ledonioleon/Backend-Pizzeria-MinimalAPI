@@ -9,6 +9,7 @@ public static class ClienteEndpoints
     public static void MapClienteEndpoints(this WebApplication app)
     {
         var grupo = app.MapGroup("/clientes");
+        grupo.WithTags("Clientes");
 
         grupo.MapGet("/", (ClienteService service) =>
             Results.Ok(service.ObtenerTodos()));
@@ -30,3 +31,4 @@ public static class ClienteEndpoints
         });
     }
 }
+

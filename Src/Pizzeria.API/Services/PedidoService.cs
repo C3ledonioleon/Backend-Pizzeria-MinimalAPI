@@ -12,17 +12,20 @@ public class PedidoService
     private readonly IPedidoRepository _pedidoRepository;
     private readonly IClienteRepository _clienteRepository;
     private readonly IPizzaRepository _pizzaRepository;
+    private readonly IDetallePedidoRepository _detalleRepository;
     private readonly CocinaSocketClient _cocinaSocketClient;
 
     public PedidoService(
         IPedidoRepository pedidoRepository,
         IClienteRepository clienteRepository,
         IPizzaRepository pizzaRepository,
+        IDetallePedidoRepository detalleRepository,
         CocinaSocketClient cocinaSocketClient)
     {
         _pedidoRepository = pedidoRepository;
         _clienteRepository = clienteRepository;
         _pizzaRepository = pizzaRepository;
+        _detalleRepository = detalleRepository;
         _cocinaSocketClient = cocinaSocketClient;
     }
 
@@ -81,4 +84,56 @@ public class PedidoService
     }
 
     public Task<int> EliminarAsync(int id) => _pedidoRepository.EliminarAsync(id);
+
+    // =======================
+    // Detalles del pedido
+    // =======================
+
+    public async Task<Pedido?> AgregarDetalleAsync(int idPedido, DetallePedidoDto dto)
+    {
+        var pedido = await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+        if (pedido is null) return null;
+
+        var pizza = await _pizzaRepository.ObtenerPorIdAsync(dto.IdPizza)
+            ?? throw new ArgumentException($"No existe una pizza con id {dto.IdPizza}");
+
+        var detalle = new DetallePedido(idPedido, dto.IdPizza, dto.Cantidad, pizza.Precio, dto.Observaciones);
+        await _detalleRepository.AgregarAsync(detalle);
+
+        await RecalcularTotalAsync(idPedido);
+        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+    }
+
+    public async Task<Pedido?> ActualizarDetalleAsync(int idPedido, int idDetalle, ActualizarDetalleDto dto)
+    {
+        var detalle = await _detalleRepository.ObtenerPorIdAsync(idDetalle);
+        if (detalle is null || detalle.IdPedido != idPedido) return null;
+
+        await _detalleRepository.ActualizarAsync(idDetalle, dto.Cantidad, dto.Observaciones);
+        await RecalcularTotalAsync(idPedido);
+        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+    }
+
+    public async Task<Pedido?> EliminarDetalleAsync(int idPedido, int idDetalle)
+    {
+        var detalle = await _detalleRepository.ObtenerPorIdAsync(idDetalle);
+        if (detalle is null || detalle.IdPedido != idPedido) return null;
+
+        await _detalleRepository.EliminarAsync(idDetalle);
+        await RecalcularTotalAsync(idPedido);
+        return await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+    }
+
+    private async Task RecalcularTotalAsync(int idPedido)
+    {
+        var detalles = await _detalleRepository.ObtenerPorPedidoAsync(idPedido);
+        var nuevoTotal = detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
+
+        var pedido = await _pedidoRepository.ObtenerPorIdAsync(idPedido);
+        if (pedido is not null)
+        {
+            pedido.Total = nuevoTotal;
+            await _pedidoRepository.ActualizarAsync(idPedido, pedido);
+        }
+    }
 }

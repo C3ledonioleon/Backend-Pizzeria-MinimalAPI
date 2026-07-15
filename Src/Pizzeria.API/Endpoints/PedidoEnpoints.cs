@@ -10,6 +10,7 @@ public static class PedidoEndpoints
     public static void MapPedidoEndpoints(this WebApplication app)
     {
         var grupo = app.MapGroup("/pedidos");
+        grupo.WithTags("Pedidos");
 
         grupo.MapGet("/", async (PedidoService service) =>
             Results.Ok(await service.ObtenerTodosAsync()));
@@ -47,6 +48,35 @@ public static class PedidoEndpoints
         {
             var filasAfectadas = await service.EliminarAsync(id);
             return filasAfectadas > 0 ? Results.NoContent() : Results.NotFound();
+        });
+
+        // =======================
+        // Detalles del pedido
+        // =======================
+
+        grupo.MapPost("/{idPedido}/detalles", async (int idPedido, DetallePedidoDto dto, PedidoService service) =>
+        {
+            try
+            {
+                var pedido = await service.AgregarDetalleAsync(idPedido, dto);
+                return pedido is not null ? Results.Ok(pedido) : Results.NotFound();
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+        });
+
+        grupo.MapPut("/{idPedido}/detalles/{idDetalle}", async (int idPedido, int idDetalle, ActualizarDetalleDto dto, PedidoService service) =>
+        {
+            var pedido = await service.ActualizarDetalleAsync(idPedido, idDetalle, dto);
+            return pedido is not null ? Results.Ok(pedido) : Results.NotFound();
+        });
+
+        grupo.MapDelete("/{idPedido}/detalles/{idDetalle}", async (int idPedido, int idDetalle, PedidoService service) =>
+        {
+            var pedido = await service.EliminarDetalleAsync(idPedido, idDetalle);
+            return pedido is not null ? Results.Ok(pedido) : Results.NotFound();
         });
     }
 }
