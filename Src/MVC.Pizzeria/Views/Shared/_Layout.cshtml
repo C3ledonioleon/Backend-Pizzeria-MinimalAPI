@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - Pizzería</title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/MVC.Pizzeria.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVBAR
+         ========================= -->
+
+    <header>
+
+        <nav class="pizzeria-navbar">
+
+            <div class="navbar-container">
+
+                <a class="pizzeria-logo"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    🍕 Pizzería
+
+                </a>
+
+
+                <div class="navbar-links">
+
+                    <a asp-area=""
+                       asp-controller="Home"
+                       asp-action="Index">
+
+                        Inicio
+
+                    </a>
+
+                    <a href="#">
+
+                        Menú
+
+                    </a>
+
+                    <a href="#">
+
+                        Pedidos
+
+                    </a>
+
+                    <a href="#">
+
+                        Contacto
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =========================
+         CONTENIDO DE LA PÁGINA
+         ========================= -->
+
+    <main role="main">
+
+        @RenderBody()
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+         ========================= -->
+
+    <footer class="pizzeria-footer">
+
+        <div class="footer-container">
+
+
+            <!-- INFORMACIÓN -->
+
+            <div class="footer-info">
+
+                <h3>🍕 Pizzería</h3>
+
+                <p>
+                    Las mejores pizzas hechas
+                    con pasión y los mejores ingredientes.
+                </p>
+
+            </div>
+
+
+            <!-- ENLACES -->
+
+            <div class="footer-links">
+
+                <h4>Enlaces</h4>
+
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+
+                    Inicio
+
+                </a>
+
+                <a href="#">
+
+                    Menú
+
+                </a>
+
+                <a href="#">
+
+                    Pedidos
+
+                </a>
+
+                <a href="#">
+
+                    Contacto
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- COPYRIGHT -->
+
+        <div class="footer-bottom">
+
+            © 2026 - Pizzería
+
+        </div>
+
+    </footer>
+
+
+    <!-- =========================
+         SCRIPTS
+         ========================= -->
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/js/site.js"
+            asp-append-version="true">
+    </script>
+
+    @await RenderSectionAsync(
+        "Scripts",
+        required: false
+    )
+
+</body>
+
+</html>

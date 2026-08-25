@@ -1,0 +1,497 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+
+    html {
+        font-size: 16px;
+    }
+
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+
+    background-color: #fff8ef;
+
+    color: #333;
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =====================================================
+   NAVBAR
+   ===================================================== */
+
+.pizzeria-navbar {
+
+    background-color: #8e1b1b;
+
+    padding: 15px 0;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+
+.navbar-container {
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 0 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+
+/* LOGO */
+
+.pizzeria-logo {
+
+    color: white;
+
+    font-size: 1.7rem;
+
+    font-weight: bold;
+
+    text-decoration: none;
+}
+
+
+.pizzeria-logo:hover {
+
+    color: #ffe0b2;
+}
+
+
+/* LINKS */
+
+.navbar-links {
+
+    display: flex;
+
+    gap: 25px;
+}
+
+
+.navbar-links a {
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 500;
+
+    transition: 0.2s;
+}
+
+
+.navbar-links a:hover {
+
+    color: #ffe0b2;
+}
+
+
+/* =====================================================
+   PORTADA
+   ===================================================== */
+
+.hero {
+
+    min-height: 450px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, 0.55),
+            rgba(0, 0, 0, 0.55)
+        );
+
+    color: white;
+}
+
+
+.hero-content {
+
+    max-width: 700px;
+
+    padding: 30px;
+}
+
+
+.hero h1 {
+
+    font-size: 4rem;
+
+    margin-bottom: 10px;
+}
+
+
+.hero h2 {
+
+    font-size: 2rem;
+
+    margin-bottom: 15px;
+}
+
+
+.hero p {
+
+    font-size: 1.2rem;
+}
+
+
+/* =====================================================
+   BOTONES
+   ===================================================== */
+
+.btn-pizzeria {
+
+    display: inline-block;
+
+    padding: 10px 20px;
+
+    margin-top: 15px;
+
+    background-color: #c62828;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+.btn-pizzeria:hover {
+
+    background-color: #a51d1d;
+
+    color: white;
+
+    transform: translateY(-2px);
+}
+
+
+/* =====================================================
+   SECCIÓN DEL MENÚ
+   ===================================================== */
+
+.menu-section {
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 60px 20px;
+
+    text-align: center;
+}
+
+
+.menu-section h2 {
+
+    font-size: 2.5rem;
+
+    color: #8e1b1b;
+
+    margin-bottom: 5px;
+}
+
+
+.section-description {
+
+    color: #666;
+
+    margin-bottom: 40px;
+}
+
+
+/* =====================================================
+   CONTENEDOR DE PIZZAS
+   ===================================================== */
+
+.pizza-container {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(280px, 1fr)
+        );
+
+    gap: 30px;
+}
+
+
+/* =====================================================
+   TARJETA DE PIZZA
+   ===================================================== */
+
+.pizza-card {
+
+    background-color: white;
+
+    border-radius: 15px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.12);
+
+    transition: 0.25s;
+}
+
+
+.pizza-card:hover {
+
+    transform: translateY(-7px);
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.18);
+}
+
+
+/* IMAGEN */
+
+.pizza-image {
+
+    height: 200px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background-color: #f1d2a5;
+
+    font-size: 6rem;
+}
+
+
+/* CUERPO */
+
+.pizza-card-body {
+
+    padding: 25px;
+}
+
+
+.pizza-card-body h3 {
+
+    color: #8e1b1b;
+
+    font-size: 1.5rem;
+
+    margin-bottom: 10px;
+}
+
+
+.pizza-card-body p {
+
+    color: #666;
+
+    min-height: 50px;
+}
+
+
+/* PRECIO */
+
+.pizza-price {
+
+    display: block;
+
+    margin-top: 15px;
+
+    color: #c62828;
+
+    font-size: 1.4rem;
+
+    font-weight: bold;
+}
+
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.pizzeria-footer {
+
+    background-color: #2b1710;
+
+    color: white;
+
+    margin-top: 60px;
+}
+
+
+/* CONTENEDOR */
+
+.footer-container {
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    padding: 40px 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 50px;
+}
+
+
+/* INFORMACIÓN */
+
+.footer-info {
+
+    max-width: 400px;
+}
+
+
+.footer-info h3 {
+
+    color: #ffcc80;
+}
+
+
+.footer-info p {
+
+    color: #ddd;
+
+    line-height: 1.6;
+}
+
+
+/* ENLACES */
+
+.footer-links h4 {
+
+    color: #ffcc80;
+}
+
+
+.footer-links a {
+
+    display: block;
+
+    color: #ddd;
+
+    text-decoration: none;
+
+    margin-top: 8px;
+}
+
+
+.footer-links a:hover {
+
+    color: #ffcc80;
+}
+
+
+/* COPYRIGHT */
+
+.footer-bottom {
+
+    text-align: center;
+
+    border-top:
+        1px solid #4a2a20;
+
+    padding: 15px;
+
+    color: #aaa;
+}
+
+
+/* =====================================================
+   RESPONSIVE / CELULAR
+   ===================================================== */
+
+@media (max-width: 600px) {
+
+
+    /* NAVBAR */
+
+    .navbar-container {
+
+        flex-direction: column;
+
+        gap: 15px;
+    }
+
+
+    .navbar-links {
+
+        gap: 15px;
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+    }
+
+
+    /* PORTADA */
+
+    .hero h1 {
+
+        font-size: 3rem;
+    }
+
+
+    .hero h2 {
+
+        font-size: 1.5rem;
+    }
+
+
+    /* MENÚ */
+
+    .menu-section h2 {
+
+        font-size: 2rem;
+    }
+
+
+    /* FOOTER */
+
+    .footer-container {
+
+        flex-direction: column;
+
+        gap: 30px;
+    }
+
+}
