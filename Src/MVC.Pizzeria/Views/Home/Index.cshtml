@@ -1,177 +1,93 @@
 ﻿@{
-    ViewData["Title"] = "Pizzería";
+    ViewData["Title"] = "Pizzería Arte & Sabor";
 }
 
-
-<!-- =========================
-     PORTADA
-     ========================= -->
-
-<section class="hero">
-
-    <div class="hero-content">
-
-        <h1>🍕 Pizzería</h1>
-
-        <h2>
-            La mejor pizza, en tu mesa
-        </h2>
-
-        <p>
-            Disfrutá nuestras pizzas hechas
-            con ingredientes frescos y mucho sabor.
+<!-- HERO / PORTADA -->
+<section class="hero-section text-center py-5 bg-dark text-white rounded-3 mb-5 position-relative overflow-hidden">
+    <div class="container py-4">
+        <span class="badge bg-warning text-dark mb-2 fs-6">Receta Artesanal</span>
+        <h1 class="display-3 fw-bold mb-3">🍕 Pizzería Arte & Sabor</h1>
+        <p class="lead col-md-8 mx-auto text-light">
+            Disfrutá la auténtica experiencia italiana: ingredientes frescos, masa madre horneada a la piedra y la mozzarella más cremosa.
         </p>
-
-        <a href="#menu"
-           class="btn-pizzeria">
-
-            Ver nuestro menú
-
-        </a>
-
+        <div class="mt-4">
+            <a href="#menu" class="btn btn-warning btn-lg me-2 fw-semibold shadow-sm">Ver Nuestro Menú</a>
+            <a href="#contacto" class="btn btn-outline-light btn-lg fw-semibold">Reservar Mesa</a>
+        </div>
     </div>
-
 </section>
 
-
-<!-- =========================
-     MENÚ
-     ========================= -->
-
-<section class="menu-section"
-         id="menu">
-
-    <h2>
-        Nuestras especialidades
-    </h2>
-
-    <p class="section-description">
-
-        Algunas de nuestras pizzas más populares
-
-    </p>
-
-
-    <div class="pizza-container">
-
-
-        <!-- MUZZARELLA -->
-
-        <div class="pizza-card">
-
-            <div class="pizza-image">
-
-                🍕
-
-            </div>
-
-
-            <div class="pizza-card-body">
-
-                <h3>
-                    Muzzarella
-                </h3>
-
-                <p>
-                    Salsa de tomate,
-                    mozzarella y orégano.
-                </p>
-
-                <span class="pizza-price">
-
-                    $8.000
-
-                </span>
-
-                <button class="btn-pizzeria">
-
-                    Agregar al pedido
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- NAPOLITANA -->
-
-        <div class="pizza-card">
-
-            <div class="pizza-image">
-
-                🍕
-
-            </div>
-
-
-            <div class="pizza-card-body">
-
-                <h3>
-                    Napolitana
-                </h3>
-
-                <p>
-                    Mozzarella, tomate fresco,
-                    ajo y orégano.
-                </p>
-
-                <span class="pizza-price">
-
-                    $9.000
-
-                </span>
-
-                <button class="btn-pizzeria">
-
-                    Agregar al pedido
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <!-- ESPECIAL -->
-
-        <div class="pizza-card">
-
-            <div class="pizza-image">
-
-                🍕
-
-            </div>
-
-
-            <div class="pizza-card-body">
-
-                <h3>
-                    Especial
-                </h3>
-
-                <p>
-                    Mozzarella, jamón,
-                    morrones y aceitunas.
-                </p>
-
-                <span class="pizza-price">
-
-                    $10.000
-
-                </span>
-
-                <button class="btn-pizzeria">
-
-                    Agregar al pedido
-
-                </button>
-
-            </div>
-
-        </div>
-
-
+<!-- MENÚ / ESPECIALIDADES -->
+<section class="menu-section py-4" id="menu">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold fs-1 text-primary">Nuestras Especialidades</h2>
+        <p class="text-muted fs-5">Las pizzas favoritas de nuestros clientes, hechas con amor y masa fresca del día.</p>
     </div>
 
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        
+        <!-- MUZZARELLA -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm pizza-card">
+                <div class="position-relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=500&q=80" 
+                         class="card-img-top pizza-img" 
+                         alt="Pizza Muzzarella">
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">$8.000</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h3 class="card-title h4 fw-bold">Muzzarella Clásica</h3>
+                    <p class="card-text text-muted flex-grow-1">
+                        Salsa de tomate casera, abundante mozzarella de primera calidad y orégano silvestre.
+                    </p>
+                    <button type="button" class="btn btn-outline-danger w-100 fw-bold mt-3">
+                        <i class="bi bi-cart-plus me-1"></i> Agregar al Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAPOLITANA -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm pizza-card">
+                <div class="position-relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=500&q=80" 
+                         class="card-img-top pizza-img" 
+                         alt="Pizza Napolitana">
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">$9.000</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h3 class="card-title h4 fw-bold">Napolitana Especial</h3>
+                    <p class="card-text text-muted flex-grow-1">
+                        Mozzarella, finas rodajas de tomate fresco, toque de ajo, aceite de oliva y orégano.
+                    </p>
+                    <button type="button" class="btn btn-outline-danger w-100 fw-bold mt-3">
+                        <i class="bi bi-cart-plus me-1"></i> Agregar al Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ESPECIAL -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm pizza-card">
+                <div class="position-relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1628840042765-356cda07504e?auto=format&fit=crop&w=500&q=80" 
+                         class="card-img-top pizza-img" 
+                         alt="Pizza Especial">
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">$10.000</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h3 class="card-title h4 fw-bold">Especial de la Casa</h3>
+                    <p class="card-text text-muted flex-grow-1">
+                        Mozzarella, jamón cocido seleccionado, morrones asados al horno y aceitunas verdes.
+                    </p>
+                    <button type="button" class="btn btn-outline-danger w-100 fw-bold mt-3">
+                        <i class="bi bi-cart-plus me-1"></i> Agregar al Pedido
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </section>
