@@ -1,0 +1,59 @@
+@model List<MVC.Pizzeria.Models.Pizza>
+
+@{
+ViewData["Title"] = "Mi Pedido";
+}
+
+<div class="container py-5">
+
+```
+<h1 class="text-center mb-4">
+    🛒 Mi Pedido
+</h1>
+
+@if (Model != null && Model.Any())
+{
+    foreach (var pizza in Model)
+    {
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h3>
+                    🍕 @pizza.Nombre
+                </h3>
+
+                <p>
+                    @pizza.Descripcion
+                </p>
+
+                <strong>
+                    $@pizza.Precio.ToString("N0")
+                </strong>
+
+            </div>
+
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-warning text-center">
+        🛒 Tu pedido está vacío.
+    </div>
+}
+
+<div class="text-center mt-4">
+
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="btn btn-warning">
+
+        🍕 Volver al menú
+
+    </a>
+
+</div>
+```
+
+</div>
