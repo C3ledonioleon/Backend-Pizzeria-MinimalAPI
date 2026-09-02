@@ -40,7 +40,7 @@ ViewData["Title"] = "Pizzería Arte & Sabor";
     </div>
 
 </div>
-```
+
 
 </section>
 
@@ -48,7 +48,6 @@ ViewData["Title"] = "Pizzería Arte & Sabor";
 
 <section class="menu-section py-4" id="menu">
 
-```
 <div class="text-center mb-5">
 
     <h2 class="fw-bold fs-1 text-primary">
@@ -118,24 +117,27 @@ ViewData["Title"] = "Pizzería Arte & Sabor";
 
 
                         <!-- AGREGAR AL PEDIDO -->
+                                <form asp-controller="Pedido"
+                                    asp-action="Agregar"
+                                    method="post">
 
-                        <form action="/Home/AgregarAlPedido"
-                              method="post">
+                                
+                                <input type="hidden"
+                                    name="idPizza"
+                                    value="@pizza.IdPizza" />
 
-                            <input type="hidden"
-                                   name="idPizza"
-                                   value="@pizza.IdPizza" />
+                                <button type="submit"
+                                        class="btn btn-outline-danger w-100 fw-bold mt-3">
 
-                            <button type="submit"
-                                    class="btn btn-outline-danger w-100 fw-bold mt-3">
+                                    <i class="bi bi-cart-plus me-1"></i>
 
-                                <i class="bi bi-cart-plus me-1"></i>
+                                    Agregar al Pedido
 
-                                Agregar al Pedido
-
-                            </button>
+                                </button>
+                                
 
                         </form>
+
 
                     </div>
 

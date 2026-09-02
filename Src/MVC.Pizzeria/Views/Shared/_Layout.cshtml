@@ -55,7 +55,10 @@
 
                     </a>
 
-                    <a href="#nuestro-menu">
+                          <a asp-area=""
+                              asp-controller="Home"
+                              asp-action="Index"
+                              asp-fragment="menu">
 
                         Menú
 
@@ -130,13 +133,16 @@
 
                 </a>
 
-                <a href="#">
+                     <a asp-area=""
+                         asp-controller="Home"
+                         asp-action="Index"
+                         asp-fragment="menu">
 
                     Menú
 
                 </a>
 
-                <a href="#">
+                <a asp-area="" asp-controller="Pedido" asp-action="Index">
 
                     Pedidos
 
