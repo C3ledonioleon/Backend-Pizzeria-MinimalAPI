@@ -76,10 +76,43 @@ ViewData["Title"] = "Pizzería Arte & Sabor";
 
                     <div class="position-relative overflow-hidden">
 
+                        @if (pizza.IdPizza == 1)
+                        {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwu6oawq4oB9SETZujr5uIuqhRbKWF2p0E0m1lJ6dLCw&s=10"
+                             class="card-img-top pizza-img"
+                             alt="Pizza Muzzarella">
+                        }
+                        else if (pizza.IdPizza == 2)
+                        {
                         <img src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?auto=format&fit=crop&w=500&q=80"
                              class="card-img-top pizza-img"
-                             alt="Pizza @pizza.Nombre">
-
+                             alt="Pizza Napolitana">
+                        }
+                        else if (pizza.IdPizza == 3)
+                        {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQ0-yRhzHKsj6-iuptG3ILauZfwH2shqLC6cP8xsA-tg&s=10"
+                             class="card-img-top pizza-img"
+                             alt="Pizza Fugazzeta">
+                        }
+                        else if (pizza.IdPizza == 4)
+                        {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTQdXo4jO4UtaWE_HMgBJjCCLEKelA-SKrN6DkOOw_lTSo_Q91qKr3ZPCg&s=10"
+                             class="card-img-top pizza-img"
+                             alt="Pizza Especial">
+                        }
+                        else if (pizza.IdPizza == 5)
+                        {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdxHl22AlWP59qGUEhJUg5wFzKyUYY-5azyUkoG12brJuFvvaEvXJLwO4v&s=10"
+                             class="card-img-top pizza-img"
+                             alt="Pizza Calabresa">
+                        }
+                        else if (pizza.IdPizza == 6)
+                        {
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJDPcUg68SjSgwWk8UJ4DRbR3UaZR_hGGb1x7rav01B6FYJG3pqjenW2s&s=10"
+                             class="card-img-top pizza-img"
+                             alt="Pizza Cuatro Quesos">
+                        }
+                
                         <!-- PRECIO -->
 
                         <span class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">
