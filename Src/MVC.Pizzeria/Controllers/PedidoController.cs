@@ -71,7 +71,16 @@ public IActionResult Agregar(int idPizza)
 [HttpPost]
 public IActionResult Incrementar(int idPizza)
 {
-    return Agregar(idPizza);
+    var pedido = ObtenerPedidoDeSesion();
+    var detalle = pedido.Detalles.FirstOrDefault(d => d.IdPizza == idPizza);
+
+    if (detalle != null)
+    {
+        detalle.Cantidad++;
+        GuardarPedidoEnSesion(pedido);
+    }
+
+    return RedirectToAction(nameof(Index));
 }
 
 [HttpPost]
