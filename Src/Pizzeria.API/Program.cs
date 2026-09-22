@@ -44,11 +44,8 @@ app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
 
 
-app.MapScalarApiReference(options =>
-    options.WithOpenApiRoutePattern("/swagger/v1/swagger.json"));
-
-
-app.MapGet("/", () => Results.Redirect("/scalar", false));
-
+// Redirección de la raíz a la documentación de Scalar
+app.MapGet("/", () => Results.Redirect("/scalar/v1", false));
 
 app.Run();
+
