@@ -14,27 +14,34 @@ builder.Services.AddDependencies();
 // Endpoints 
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSwaggerGen(options =>
+builder.Services.AddOpenApi(options =>
 {
-    options.SupportNonNullableReferenceTypes();
-
-    options.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
+    // Configura los metadatos del documento (Título, Versión, Descripción)
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
-        Title = "Pizzeria API",
-        Version = "v1",
-        Description = "API para la gestión de pedidos de una pizzería.",
+        document.Info.Title = "Pizzeria API";
+        document.Info.Version = "v1";
+        document.Info.Description = "API para la gestión de pedidos de una pizzería.";
+        return Task.CompletedTask;
     });
 });
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    // Expone el JSON nativo en /openapi/v1.json
+    app.MapOpenApi(); 
+    
+    // Renderiza la interfaz de Scalar usando los datos nativos
+    app.MapScalarApiReference(); 
+}
 
 // Endpoints
 
 app.MapClienteEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
-
-app.UseSwagger();
 
 
 app.MapScalarApiReference(options =>
