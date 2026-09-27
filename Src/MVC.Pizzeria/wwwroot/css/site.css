@@ -1,544 +1,215 @@
+/* =====================================================
+   CONFIGURACIÓN GENERAL & FONDO OSCURO LLAMATIVO
+   ===================================================== */
 html {
     font-size: 14px;
-}
-
-@media (min-width: 768px) {
-
-    html {
-        font-size: 16px;
-    }
-
-}
-
-html {
     position: relative;
     min-height: 100%;
 }
 
-body {
-    margin: 0;
-
-    background-color: #fff8ef;
-
-    color: #333;
-
-    font-family: Arial, Helvetica, sans-serif;
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }
 
+body {
+    margin: 0;
+    /* Fondo oscuro con degradado continuo y destello cálido estilo horno */
+    background: radial-gradient(circle at 50% 0%, #2a1208 0%, #0d0d0d 60%, #050505 100%);
+    background-attachment: fixed;
+    color: #e0e0e0;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+}
 
 /* =====================================================
    NAVBAR
    ===================================================== */
-
 .pizzeria-navbar {
-
-    background-color: #8e1b1b;
-
+    background-color: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 193, 7, 0.2);
     padding: 15px 0;
-
-    box-shadow:
-        0 3px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
-
 .navbar-container {
-
     max-width: 1200px;
-
     margin: auto;
-
     padding: 0 20px;
-
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
 }
 
-
-/* LOGO */
-
 .pizzeria-logo {
-
-    color: white;
-
-    font-size: 1.7rem;
-
-    font-weight: bold;
-
+    color: #ffc107;
+    font-size: 1.8rem;
+    font-weight: 800;
     text-decoration: none;
+    text-shadow: 0 0 10px rgba(255, 193, 7, 0.3);
 }
-
 
 .pizzeria-logo:hover {
-
-    color: #ffe0b2;
+    color: #ff8c00;
 }
 
-
-/* LINKS */
-
 .navbar-links {
-
     display: flex;
-
     gap: 25px;
 }
 
-
 .navbar-links a {
-
-    color: white;
-
+    color: #ffffff;
     text-decoration: none;
-
     font-weight: 500;
-
-    transition: 0.2s;
+    transition: all 0.3s ease;
 }
-
 
 .navbar-links a:hover {
-
-    color: #ffe0b2;
+    color: #ffc107;
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
 }
-
 
 /* =====================================================
-   PORTADA
+   PORTADA / HERO SECTION CON IMAGEN DE FONDO
    ===================================================== */
-
-.hero {
-
-    min-height: 450px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    text-align: center;
-
-    background:
-        linear-gradient(
-            rgba(0, 0, 0, 0.55),
-            rgba(0, 0, 0, 0.55)
-        );
-
-    color: white;
+.hero-section {
+    min-height: 520px;
+    /* Imagen de fondo de alta calidad desde Unsplash */
+    background: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+    border-radius: 0 0 30px 30px;
+    border-bottom: 2px solid #ffc107;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
 }
 
-
-.hero-content {
-
-    max-width: 700px;
-
-    padding: 30px;
+.hero-overlay {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(13, 13, 13, 0.95) 100%);
+    min-height: 520px;
+    width: 100%;
 }
 
-
-.hero h1 {
-
-    font-size: 4rem;
-
-    margin-bottom: 10px;
+.hero-title {
+    text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+    letter-spacing: -1px;
 }
 
-
-.hero h2 {
-
-    font-size: 2rem;
-
-    margin-bottom: 15px;
-}
-
-
-.hero p {
-
-    font-size: 1.2rem;
-}
-
-
-/* =====================================================
-   BOTONES
-   ===================================================== */
-
-.btn-pizzeria {
-
-    display: inline-block;
-
-    padding: 10px 20px;
-
-    margin-top: 15px;
-
-    background-color: #c62828;
-
-    color: white;
-
+.btn-glow {
+    background-color: #ff3b30;
     border: none;
-
-    border-radius: 8px;
-
-    text-decoration: none;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
-    transition: 0.2s;
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+    transition: all 0.3s ease;
 }
 
-
-.btn-pizzeria:hover {
-
-    background-color: #a51d1d;
-
-    color: white;
-
-    transform: translateY(-2px);
+.btn-glow:hover {
+    background-color: #ff2d21;
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(255, 59, 48, 0.8);
 }
-
 
 /* =====================================================
    SECCIÓN DEL MENÚ
    ===================================================== */
-
 .menu-section {
-
-    max-width: 1100px;
-
+    max-width: 1200px;
     margin: auto;
-
-    padding: 60px 20px;
-
-    text-align: center;
+    padding: 40px 20px;
 }
 
-
-.menu-section h2 {
-
-    font-size: 2.5rem;
-
-    color: #8e1b1b;
-
-    margin-bottom: 5px;
+.section-title {
+    text-shadow: 0 2px 10px rgba(255, 193, 7, 0.2);
 }
-
-
-.section-description {
-
-    color: #666;
-
-    margin-bottom: 40px;
-}
-
 
 /* =====================================================
-   CONTENEDOR DE PIZZAS
+   TARJETAS DE PIZZA (DARK CARD DESIGN)
    ===================================================== */
-
-.pizza-container {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(280px, 1fr)
-        );
-
-    gap: 30px;
+.bg-dark-card {
+    background-color: #181818 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 18px;
+    backdrop-filter: blur(5px);
 }
-
-
-/* =====================================================
-   TARJETA DE PIZZA
-   ===================================================== */
 
 .pizza-card {
-
-    background-color: white;
-
-    border-radius: 15px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 5px 15px rgba(0, 0, 0, 0.12);
-
-    transition: 0.25s;
-
-    height: 100%;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.35s ease, border-color 0.35s ease;
 }
-
 
 .pizza-card:hover {
-
-    transform: translateY(-7px);
-
-    box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.18);
+    transform: translateY(-10px);
+    border-color: rgba(255, 193, 7, 0.4) !important;
+    box-shadow: 0 15px 35px rgba(255, 193, 7, 0.15) !important;
 }
 
-
 /* =====================================================
-   IMAGEN DE LA PIZZA
+   IMÁGENES DE PIZZA
    ===================================================== */
-
-/*
-   Todas las imágenes tendrán:
-   - El mismo ancho
-   - El mismo alto
-   - Sin deformarse
-*/
-
-.pizza-image,
 .pizza-img {
-
     width: 100%;
-
-    height: 220px;
-
+    height: 230px;
     object-fit: cover;
-
     display: block;
-
-    background-color: #f1d2a5;
+    transition: transform 0.5s ease;
 }
 
+.pizza-card:hover .pizza-img {
+    transform: scale(1.08);
+}
 
 /* =====================================================
-   CUERPO DE LA TARJETA
+   BOTÓN AGREGAR AL PEDIDO
    ===================================================== */
-
-.pizza-card-body {
-
-    padding: 25px;
-
+.btn-cart {
+    transition: all 0.3s ease;
+    border-radius: 10px;
 }
 
-
-.pizza-card-body h3 {
-
-    color: #8e1b1b;
-
-    font-size: 1.5rem;
-
-    margin-bottom: 10px;
-
+.btn-cart:hover {
+    background-color: #ffca28;
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
+    transform: scale(1.02);
 }
-
-
-.pizza-card-body p {
-
-    color: #666;
-
-    min-height: 50px;
-
-}
-
-
-/* =====================================================
-   PRECIO
-   ===================================================== */
-
-.pizza-price {
-
-    display: block;
-
-    margin-top: 15px;
-
-    color: #c62828;
-
-    font-size: 1.4rem;
-
-    font-weight: bold;
-
-}
-
 
 /* =====================================================
    FOOTER
    ===================================================== */
-
 .pizzeria-footer {
-
-    background-color: #2b1710;
-
+    background-color: #080808;
     color: white;
-
-    margin-top: 60px;
-
+    margin-top: 80px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
-
-
-/* CONTENEDOR */
 
 .footer-container {
-
     max-width: 1100px;
-
     margin: auto;
-
-    padding: 40px 20px;
-
+    padding: 50px 20px;
     display: flex;
-
     justify-content: space-between;
-
     gap: 50px;
-
 }
 
-
-/* INFORMACIÓN */
-
-.footer-info {
-
-    max-width: 400px;
-
+.footer-info h3, .footer-links h4 {
+    color: #ffc107;
 }
 
-
-.footer-info h3 {
-
-    color: #ffcc80;
-
+.footer-info p, .footer-links a {
+    color: #aaa;
 }
-
-
-.footer-info p {
-
-    color: #ddd;
-
-    line-height: 1.6;
-
-}
-
-
-/* ENLACES */
-
-.footer-links h4 {
-
-    color: #ffcc80;
-
-}
-
-
-.footer-links a {
-
-    display: block;
-
-    color: #ddd;
-
-    text-decoration: none;
-
-    margin-top: 8px;
-
-}
-
 
 .footer-links a:hover {
-
-    color: #ffcc80;
-
+    color: #ffc107;
 }
-
-
-/* COPYRIGHT */
 
 .footer-bottom {
-
     text-align: center;
-
-    border-top:
-        1px solid #4a2a20;
-
-    padding: 15px;
-
-    color: #aaa;
-
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 20px;
+    color: #777;
 }
-
 
 /* =====================================================
-   RESPONSIVE / CELULAR
+   ANIMACIONES Y REVEAL
    ===================================================== */
-
-@media (max-width: 600px) {
-
-
-    /* NAVBAR */
-
-    .navbar-container {
-
-        flex-direction: column;
-
-        gap: 15px;
-
-    }
-
-
-    .navbar-links {
-
-        gap: 15px;
-
-        flex-wrap: wrap;
-
-        justify-content: center;
-
-    }
-
-
-    /* PORTADA */
-
-    .hero h1 {
-
-        font-size: 3rem;
-
-    }
-
-
-    .hero h2 {
-
-        font-size: 1.5rem;
-
-    }
-
-
-    /* MENÚ */
-
-    .menu-section h2 {
-
-        font-size: 2rem;
-
-    }
-
-
-    /* IMÁGENES EN CELULAR */
-
-    .pizza-image,
-    .pizza-img {
-
-        height: 200px;
-
-    }
-
-
-    /* FOOTER */
-
-    .footer-container {
-
-        flex-direction: column;
-
-        gap: 30px;
-
-    }
-
-}
-
 .pizza-reveal {
     opacity: 0;
     transform: translateY(28px);
@@ -555,5 +226,18 @@ body {
         opacity: 1;
         transform: none;
         transition: none;
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .navbar-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        gap: 30px;
     }
 }

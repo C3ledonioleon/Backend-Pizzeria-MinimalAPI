@@ -1,198 +1,142 @@
 ﻿@model List<MVC.Pizzeria.Models.Pizza>
 
 @{
-ViewData["Title"] = "Pizzería Arte & Sabor";
+    ViewData["Title"] = "Pizzería Arte & Sabor";
 }
 
-<!-- HERO / PORTADA -->
+<!-- HERO / PORTADA CON IMAGEN DE FONDO -->
+<section class="hero-section text-center position-relative overflow-hidden mb-5">
+    <!-- Overlay semitransparente para mejorar el contraste del texto -->
+    <div class="hero-overlay d-flex align-items-center justify-content-center py-5">
+        <div class="container py-5">
+            <span class="badge bg-warning text-dark mb-3 fs-6 px-3 py-2 text-uppercase tracking-wider rounded-pill shadow">
+                🔥 Receta Artesanal a la Leña
+            </span>
 
-<section class="hero-section text-center py-5 bg-dark text-white rounded-3 mb-5 position-relative overflow-hidden">
+            <h1 class="display-2 fw-black mb-3 hero-title text-white">
+                🍕 Pizzería Arte & Sabor
+            </h1>
 
-<div class="container py-4">
+            <p class="lead col-md-8 mx-auto text-light opacity-90 fs-4 mb-4">
+                Disfrutá la auténtica experiencia italiana: ingredientes frescos, masa madre horneada a la piedra y la mozzarella más cremosa.
+            </p>
 
-    <span class="badge bg-warning text-dark mb-2 fs-6">
-        Receta Artesanal
-    </span>
+            <div class="d-flex justify-content-center gap-3 flex-wrap mt-4">
+                <a href="#menu" class="btn btn-danger btn-lg px-4 py-3 fw-bold shadow-lg btn-glow">
+                    <i class="bi bi-journal-richtext me-2"></i>Ver Nuestro Menú
+                </a>
 
-    <h1 class="display-3 fw-bold mb-3">
-        🍕 Pizzería Arte & Sabor
-    </h1>
-
-    <p class="lead col-md-8 mx-auto text-light">
-        Disfrutá la auténtica experiencia italiana:
-        ingredientes frescos, masa madre horneada a la piedra
-        y la mozzarella más cremosa.
-    </p>
-
-    <div class="mt-4">
-
-        <a href="#menu"
-           class="btn btn-warning btn-lg me-2 fw-semibold shadow-sm">
-            Ver Nuestro Menú
-        </a>
-
-        <a href="#contacto"
-           class="btn btn-outline-light btn-lg fw-semibold">
-            Reservar Mesa
-        </a>
-
+                <a href="#contacto" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold rounded-3">
+                    <i class="bi bi-calendar-check me-2"></i>Reservar Mesa
+                </a>
+            </div>
+        </div>
     </div>
-
-</div>
-
-
 </section>
 
 <!-- MENÚ / ESPECIALIDADES -->
-
 <section class="menu-section py-4" id="menu">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold display-4 text-warning mb-2 section-title">
+            Nuestras Especialidades
+        </h2>
+        <p class="text-light opacity-75 fs-5">
+            Las pizzas favoritas de nuestros clientes, hechas con amor y masa fresca del día.
+        </p>
+    </div>
 
-<div class="text-center mb-5">
-
-    <h2 class="fw-bold fs-1 text-primary">
-        Nuestras Especialidades
-    </h2>
-
-    <p class="text-muted fs-5">
-        Las pizzas favoritas de nuestros clientes,
-        hechas con amor y masa fresca del día.
-    </p>
-
-</div>
-
-
-<div class="row row-cols-1 row-cols-md-3 g-4">
-
-    @if (Model != null && Model.Any())
-    {
-        @foreach (var pizza in Model)
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @if (Model != null && Model.Any())
         {
-            <div class="col pizza-reveal">
+            @foreach (var pizza in Model)
+            {
+                <div class="col pizza-reveal">
+                    <div class="card h-100 border-0 shadow-lg pizza-card bg-dark-card text-white">
+                        
+                        <!-- IMAGEN Y BADGE DE PRECIO -->
+                        <div class="position-relative overflow-hidden rounded-top">
+                            @if (pizza.IdPizza == 1)
+                            {
+                                <img src="/Images/muzzarella.jpeg" 
+                                class="card-img-top pizza-img" 
+                                alt="Pizza Muzzarella">
+                            }
+                            else if (pizza.IdPizza == 2)
+                            {
+                                <img src="/Images/napolitana.jpeg" 
+                                class="card-img-top pizza-img"
+                                alt="Pizza Napolitana">
+                            }
+                            else if (pizza.IdPizza == 3)
+                            {
+                                <img src="/Images/fugazzeta.jpeg"
+                                class="card-img-top pizza-img"
+                                alt="Pizza Fugazzeta">
+                            }
+                            else if (pizza.IdPizza == 4)
+                            {
+                                <img src="/Images/especial.jpeg"
+                                class="card-img-top pizza-img"
+                                alt="Pizza Especial">
+                            }
+                            else if (pizza.IdPizza == 5)
+                            {
+                                <img src="/Images/calabresa.jpeg"
+                                class="card-img-top pizza-img"
+                                alt="Pizza Calabresa">
+                            }
+                            else if (pizza.IdPizza == 6)
+                            {
+                                <img src="/Images/cuatroquesos.jpeg" 
+                                class="card-img-top pizza-img" 
+                                alt="Pizza Cuatro Quesos">
+                            }
 
-                <div class="card h-100 border-0 shadow-sm pizza-card">
+                            <!-- BADGE DE PRECIO DESTACADO -->
+                            <span class="badge bg-warning text-dark position-absolute top-0 end-0 m-3 fs-5 fw-bold shadow">
+                                $@pizza.Precio.ToString("N0")
+                            </span>
+                        </div>
 
-                    <!-- IMAGEN -->
+                        <!-- INFORMACIÓN DE LA PIZZA -->
+                        <div class="card-body d-flex flex-column p-4">
+                            <h3 class="card-title h4 fw-bold text-warning mb-2">
+                                @pizza.Nombre
+                            </h3>
 
-                    <div class="position-relative overflow-hidden">
-
-                        @if (pizza.IdPizza == 1)
-                        {
-                        <img src="/Images/muzzarella.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Muzzarella">
-                        }
-                        else if (pizza.IdPizza == 2)
-                        {
-                        <img src="/Images/napolitana.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Napolitana">
-                        }
-                        else if (pizza.IdPizza == 3)
-                        {
-                        <img src="/Images/fugazzeta.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Fugazzeta">
-                        }
-                        else if (pizza.IdPizza == 4)
-                        {
-                        <img src="/Images/especial.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Especial">
-                        }
-                        else if (pizza.IdPizza == 5)
-                        {
-                        <img src="/Images/calabresa.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Calabresa">
-                        }
-                        else if (pizza.IdPizza == 6)
-                        {
-                        <img src="/Images/cuatroquesos.jpeg"
-                             class="card-img-top pizza-img"
-                             alt="Pizza Cuatro Quesos">
-                        }
-                
-                        <!-- PRECIO -->
-
-                        <span class="badge bg-danger position-absolute top-0 end-0 m-3 fs-6">
-                            $@pizza.Precio.ToString("N0")
-                        </span>
-
-                    </div>
-
-
-                    <!-- INFORMACIÓN -->
-
-                    <div class="card-body d-flex flex-column">
-
-                        <h3 class="card-title h4 fw-bold">
-                            @pizza.Nombre
-                        </h3>
-
-                        <p class="card-text text-muted flex-grow-1">
-                            @pizza.Descripcion
-                        </p>
-
-
-                        <!-- INGREDIENTES -->
-
-                        @if (pizza.Ingredientes != null && pizza.Ingredientes.Any())
-                        {
-                            <p class="small text-muted mb-2">
-
-                                <strong>Ingredientes:</strong>
-
-                                @string.Join(", ", pizza.Ingredientes)
-
+                            <p class="card-text text-light opacity-75 flex-grow-1">
+                                @pizza.Descripcion
                             </p>
-                        }
 
+                            <!-- INGREDIENTES -->
+                            @if (pizza.Ingredientes != null && pizza.Ingredientes.Any())
+                            {
+                                <div class="small text-light opacity-75 mb-3 pt-2 border-top border-secondary">
+                                    <strong class="text-warning">Ingredientes:</strong>
+                                    <span>@string.Join(", ", pizza.Ingredientes)</span>
+                                </div>
+                            }
 
-                        <!-- AGREGAR AL PEDIDO -->
-                                <form asp-controller="Pedido"
-                                    asp-action="Agregar"
-                                    method="post">
-
-                                
-                                <input type="hidden"
-                                    name="idPizza"
-                                    value="@pizza.IdPizza" />
-
-                                <button type="submit"
-                                        class="btn btn-outline-danger w-100 fw-bold mt-3">
-
-                                    <i class="bi bi-cart-plus me-1"></i>
-
-                                    Agregar al Pedido
-
+                            <!-- BOTÓN AGREGAR -->
+                            <form asp-controller="Pedido" asp-action="Agregar" method="post" class="mt-auto">
+                                <input type="hidden" name="idPizza" value="@pizza.IdPizza" />
+                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2 btn-cart text-dark">
+                                    <i class="bi bi-cart-plus me-2"></i>Agregar al Pedido
                                 </button>
-                                
-
-                        </form>
-
-
+                            </form>
+                        </div>
                     </div>
-
                 </div>
-
+            }
+        }
+        else
+        {
+            <!-- SIN PIZZAS -->
+            <div class="col-12">
+                <div class="alert alert-dark text-center text-warning border-warning">
+                    No hay pizzas disponibles en este momento.
+                </div>
             </div>
         }
-    }
-    else
-    {
-        <!-- SIN PIZZAS -->
-
-        <div class="col-12">
-
-            <div class="alert alert-warning text-center">
-
-                No hay pizzas disponibles en este momento.
-
-            </div>
-
-        </div>
-    }
-
-</div>
-
+    </div>
 </section>

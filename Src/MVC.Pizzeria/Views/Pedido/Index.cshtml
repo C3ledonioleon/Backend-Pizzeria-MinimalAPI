@@ -68,8 +68,12 @@ ViewData["Title"] = "Mi Pedido";
 
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <form asp-action="Disminuir" method="post">
-                                        <input type="hidden" name="idPizza" value="@detalle.IdPizza" />
-                                        <button type="submit" class="btn btn-outline-danger btn-sm" title="Quitar una unidad">−</button>
+                                        <input type="hidden" 
+                                        name="idPizza"
+                                        value="@detalle.IdPizza" />
+                                        <button type="submit" 
+                                        class="btn btn-outline-danger btn-sm" 
+                                        title="Quitar una unidad">−</button>
                                     </form>
 
                                     <span class="badge bg-danger fs-6">@detalle.Cantidad</span>
