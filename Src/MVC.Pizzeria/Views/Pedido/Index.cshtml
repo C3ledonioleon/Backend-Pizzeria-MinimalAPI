@@ -6,6 +6,11 @@ ViewData["Title"] = "Mi Pedido";
 
 <div class="container py-5">
 
+@if (TempData["PedidoConfirmado"] is string mensajeConfirmacion)
+{
+    <div class="alert alert-success" role="status">@mensajeConfirmacion</div>
+}
+
 <div class="text-center mb-5">
 
     <h1 class="fw-bold">
@@ -131,9 +136,9 @@ ViewData["Title"] = "Mi Pedido";
                             + Agregar otra pizza
                         </a>
 
-                        <button type="button" class="btn btn-danger">
+                        <a asp-action="Confirmar" class="btn btn-danger">
                             Confirmar pedido
-                        </button>
+                        </a>
 
                         <form asp-action="Cancelar" method="post">
                             <button type="submit" class="btn btn-outline-danger w-100">

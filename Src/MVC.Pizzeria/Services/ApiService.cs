@@ -16,6 +16,13 @@ private readonly HttpClient _httpClient;
     {
         return await _httpClient.GetFromJsonAsync<T>(endpoint);
     }
+
+    public async Task<TResponse?> PostAsync<TRequest, TResponse>(string endpoint, TRequest request)
+    {
+        using var response = await _httpClient.PostAsJsonAsync(endpoint, request);
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<TResponse>();
+    }
 }
 
 

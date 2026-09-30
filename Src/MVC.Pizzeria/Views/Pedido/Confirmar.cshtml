@@ -1,0 +1,57 @@
+@model MVC.Pizzeria.Models.ConfirmarPedidoViewModel
+
+@{
+    ViewData["Title"] = "Datos de entrega";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-xl-6">
+            <h1 class="fw-bold mb-2">Datos de entrega</h1>
+            <p class="text-muted mb-4">Completa tus datos para confirmar el pedido.</p>
+
+            <form asp-action="Confirmar" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Nombre" class="form-label">Nombre</label>
+                    <input asp-for="Nombre" class="form-control" autocomplete="given-name" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Apellido" class="form-label">Apellido</label>
+                    <input asp-for="Apellido" class="form-control" autocomplete="family-name" />
+                    <span asp-validation-for="Apellido" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Telefono" class="form-label">Teléfono</label>
+                    <input asp-for="Telefono" class="form-control" type="tel" autocomplete="tel" />
+                    <span asp-validation-for="Telefono" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Direccion" class="form-label">Dirección de entrega</label>
+                    <input asp-for="Direccion" class="form-control" autocomplete="street-address" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Email" class="form-label">Correo electrónico (opcional)</label>
+                    <input asp-for="Email" class="form-control" type="email" autocomplete="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a asp-action="Index" class="btn btn-outline-secondary">Volver al pedido</a>
+                    <button type="submit" class="btn btn-danger flex-grow-1">Confirmar pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

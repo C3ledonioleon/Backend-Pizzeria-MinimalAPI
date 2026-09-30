@@ -110,6 +110,82 @@ public IActionResult Cancelar()
     return Redirect("/Home/Index#menu");
 }
 
+[HttpGet]
+public IActionResult Confirmar()
+{
+    var pedido = ObtenerPedidoDeSesion();
+    if (!pedido.Detalles.Any())
+    {
+        return RedirectToAction(nameof(Index));
+    }
+
+    return View(new ConfirmarPedidoViewModel());
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Confirmar(ConfirmarPedidoViewModel datos)
+{
+    var pedido = ObtenerPedidoDeSesion();
+    if (!pedido.Detalles.Any())
+    {
+        return RedirectToAction(nameof(Index));
+    }
+
+    if (!ModelState.IsValid)
+    {
+        return View(datos);
+    }
+
+    try
+    {
+        var cliente = await _apiService.PostAsync<CrearClienteRequest, ClienteCreadoResponse>(
+            "api/clientes/",
+            new CrearClienteRequest
+            {
+                Nombre = datos.Nombre ?? string.Empty,
+                Apellido = datos.Apellido ?? string.Empty,
+                Telefono = datos.Telefono ?? string.Empty,
+                Direccion = datos.Direccion ?? string.Empty,
+                Email = datos.Email ?? string.Empty
+            });
+
+        if (cliente is null)
+        {
+            ModelState.AddModelError(string.Empty, "No se pudo registrar al cliente. Intenta nuevamente.");
+            return View(datos);
+        }
+
+        var pedidoCreado = await _apiService.PostAsync<CrearPedidoRequest, PedidoCreadoResponse>(
+            "api/pedidos/",
+            new CrearPedidoRequest
+            {
+                IdCliente = cliente.IdCliente,
+                Detalles = pedido.Detalles.Select(detalle => new CrearDetallePedidoRequest
+                {
+                    IdPizza = detalle.IdPizza,
+                    Cantidad = detalle.Cantidad,
+                    Observaciones = detalle.Observaciones ?? string.Empty
+                }).ToList()
+            });
+
+        if (pedidoCreado is null)
+        {
+            ModelState.AddModelError(string.Empty, "No se pudo crear el pedido. Intenta nuevamente.");
+            return View(datos);
+        }
+
+        HttpContext.Session.Remove("Pedido");
+        TempData["PedidoConfirmado"] = $"¡Pedido #{pedidoCreado.IdPedido} confirmado! Pronto nos pondremos en contacto contigo.";
+        return RedirectToAction(nameof(Index));
+    }
+    catch (HttpRequestException)
+    {
+        ModelState.AddModelError(string.Empty, "No fue posible conectar con el servicio de pedidos. Intenta nuevamente.");
+        return View(datos);
+    }
+}
+
 private Pedido ObtenerPedidoDeSesion()
 {
     var pedidoJson = HttpContext.Session.GetString("Pedido");
