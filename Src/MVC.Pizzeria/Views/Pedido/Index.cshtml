@@ -4,7 +4,7 @@
 ViewData["Title"] = "Mi Pedido";
 }
 
-<div class="container py-5">
+<div class="container py-5 pedido-page">
 
 @if (TempData["PedidoConfirmado"] is string mensajeConfirmacion)
 {
@@ -157,7 +157,7 @@ ViewData["Title"] = "Mi Pedido";
 }
 else
 {
-    <div class="text-center">
+    <div class="text-center pedido-empty-state">
 
         <div class="alert alert-warning">
 

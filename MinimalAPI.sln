@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cliente.Consola", "Src\Clie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pizzeria.API", "Src\Pizzeria.API\Pizzeria.API.csproj", "{0D2D7816-76A2-4557-8179-B63FE8BABD1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVC.Pizzeria", "Src\MVC.Pizzeria\MVC.Pizzeria.csproj", "{58ABF1CB-23AB-4B3D-9028-A49D8F70F325}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
