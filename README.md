@@ -24,7 +24,7 @@ El proyecto está compuesto por 4 aplicaciones independientes que se comunican e
 
 ## Tecnologías
 
-- **.NET 8** - Framework principal
+- **.NET 10** - Framework principal
 - **C# Minimal API** - Backend REST
 - **MySQL** - Base de datos relacional
 - **Dapper** - Micro ORM para acceso a datos
