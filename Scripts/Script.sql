@@ -7,6 +7,15 @@ USE `6to_Pizzeria`;
 -- =========================
 -- CLIENTES
 -- =========================
+
+CREATE TABLE Usuario (
+IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
+Email VARCHAR(45) NOT NULL,
+Contracena VARCHAR (100) NOT NULL
+);
+
+
+
 CREATE TABLE Cliente (
     IdCliente INT AUTO_INCREMENT PRIMARY KEY,
     Nombre VARCHAR(100) NOT NULL,
