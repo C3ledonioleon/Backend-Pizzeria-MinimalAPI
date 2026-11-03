@@ -1,22 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Pizzeria.API.Enums;
 
 namespace Pizzeria.API.Models
 {
     public class Usuario
     {
-        public int IdUsario {get; set;}
-        public string Email {get; set;}
-        public string Contrasena {get; set;}
+        public int IdUsuario { get; set; }
 
-        public Usuario(){}
+        public string Email { get; set; } = string.Empty;
 
-        public Usuario(string email, string contrasena)
+        public string Password { get; set; } = string.Empty;
+
+        public RolUsuario Rol { get; set; }
+
+        public int? IdCliente { get; set; }
+
+        public Usuario() { }
+
+        public Usuario(string email, string password, RolUsuario rol)
         {
             Email = email;
-            Contrasena = contrasena;
+            Password = password;
+            Rol = rol;
         }
     }
 }

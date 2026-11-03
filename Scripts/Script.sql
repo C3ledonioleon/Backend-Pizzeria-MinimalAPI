@@ -2,28 +2,37 @@ DROP DATABASE IF EXISTS `6to_Pizzeria`;
 CREATE DATABASE `6to_Pizzeria`;
 USE `6to_Pizzeria`;
 
+CREATE TABLE Usuario (
+    IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(100) NOT NULL,
+    Email VARCHAR(150) NOT NULL UNIQUE,
+    Password VARCHAR(256) NOT NULL,
+    Rol INT NOT NULL
+);
+
+INSERT INTO Usuario (Username, Email, Password, Rol)
+VALUES ('admin', 'admin@gmail.com', '3eb3fe66b31e3b4d10fa70b5cad49c7112294af6ae4e476a1c405155d45aa121', 1);
+
 
 
 -- =========================
 -- CLIENTES
 -- =========================
 
-CREATE TABLE Usuario (
-IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
-Email VARCHAR(45) NOT NULL,
-Contracena VARCHAR (100) NOT NULL
-);
-
-
-
 CREATE TABLE Cliente (
     IdCliente INT AUTO_INCREMENT PRIMARY KEY,
+    IdUsuario INT NOT NULL UNIQUE,
     Nombre VARCHAR(100) NOT NULL,
     Apellido VARCHAR(100) NOT NULL,
     Email VARCHAR(150) NOT NULL UNIQUE,
     Telefono VARCHAR(30) NOT NULL,
-    Direccion VARCHAR(200) NOT NULL
+    Direccion VARCHAR(200) NOT NULL,
+
+    CONSTRAINT FK_Cliente_Usuario
+        FOREIGN KEY (IdUsuario)
+        REFERENCES Usuario(IdUsuario)
 );
+
 
 -- =========================
 -- PIZZAS

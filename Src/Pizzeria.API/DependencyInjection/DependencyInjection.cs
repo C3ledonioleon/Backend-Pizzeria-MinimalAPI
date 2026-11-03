@@ -22,11 +22,16 @@ public static class DependencyInjection
         services.AddScoped<IPizzaRepository, PizzaRepository>();
         services.AddScoped<IDetallePedidoRepository, DetallePedidoRepository>();
 
+        // Nuevo repositorio de Usuario
+        services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
         // Services
         services.AddScoped<IPedidoService, PedidoService>();
         services.AddScoped<IClienteService, ClienteService>();
         services.AddScoped<IPizzaService, PizzaService>();
+
+        // Nuevo servicio de Usuario
+        services.AddScoped<IUsuarioService, UsuarioService>();
 
         // Socket cocina
         services.AddSingleton<CocinaSocketClient>();

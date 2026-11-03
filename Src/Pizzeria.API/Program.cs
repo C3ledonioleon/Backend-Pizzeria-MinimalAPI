@@ -42,10 +42,9 @@ if (app.Environment.IsDevelopment())
 app.MapClienteEndpoints();
 app.MapPizzaEndpoints();
 app.MapPedidoEndpoints();
-
+app.MapUsuarioEndpoints();
 
 // Redirección de la raíz a la documentación de Scalar
 app.MapGet("/", () => Results.Redirect("/scalar/v1", false));
 
 app.Run();
-
