@@ -4,11 +4,8 @@ namespace Pizzeria.API.Repositories.IRepositories
 {
     public interface IUsuarioRepository
     {
-        Task<Usuario?> ObtenerPorEmailAsync(string email);
+        Task<Usuario?> ObtenerPorUsuarioOEmailAsync(string usuarioOEmail);
 
-        Task<Usuario> RegistrarClienteAsync(
-            Usuario usuario,
-            Cliente cliente
-        );
+        Task<Usuario> RegistrarAsync(Usuario usuario);
     }
 }

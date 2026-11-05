@@ -8,6 +8,8 @@ public class Cliente
     public string Email { get; set; } 
     public string Telefono { get; set; } 
     public string Direccion { get; set; } 
+
+   public int IdUsuario { get; set; }
     public Cliente() { }
 
     public Cliente(string nombre, string apellido, string email, string telefono, string direccion)

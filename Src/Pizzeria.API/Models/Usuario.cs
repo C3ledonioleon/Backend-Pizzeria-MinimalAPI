@@ -6,6 +6,8 @@ namespace Pizzeria.API.Models
     {
         public int IdUsuario { get; set; }
 
+        public string Username { get; set; } = string.Empty;
+
         public string Email { get; set; } = string.Empty;
 
         public string Password { get; set; } = string.Empty;
@@ -16,8 +18,9 @@ namespace Pizzeria.API.Models
 
         public Usuario() { }
 
-        public Usuario(string email, string password, RolUsuario rol)
+        public Usuario(string username, string email, string password, RolUsuario rol)
         {
+            Username = username;
             Email = email;
             Password = password;
             Rol = rol;

@@ -28,19 +28,24 @@ public class ClienteRepository : IClienteRepository
             "SELECT * FROM Cliente WHERE IdCliente = @Id", new { Id = id });
     }
 
-    public async Task<Cliente> CrearAsync(Cliente cliente)
-    {
-        using var connection = _connectionFactory.CrearConexion();
+        public async Task<Cliente> CrearAsync(Cliente cliente)
+        {
+            using var connection = _connectionFactory.CrearConexion();
 
-        const string sql = @"
-            INSERT INTO Cliente (Nombre, Apellido, Email, Telefono, Direccion)
-            VALUES (@Nombre, @Apellido, @Email, @Telefono, @Direccion);
-            SELECT LAST_INSERT_ID();";
+            const string sql = @"
+                INSERT INTO Cliente
+                    (IdUsuario, Nombre, Apellido, Email, Telefono, Direccion)
+                VALUES
+                    (@IdUsuario, @Nombre, @Apellido, @Email, @Telefono, @Direccion);
 
-        var nuevoId = await connection.QuerySingleAsync<int>(sql, cliente);
-        cliente.IdCliente = nuevoId;
-        return cliente;
-    }
+                SELECT LAST_INSERT_ID();";
+
+            var nuevoId = await connection.QuerySingleAsync<int>(sql, cliente);
+
+            cliente.IdCliente = nuevoId;
+
+            return cliente;
+        }
 
     public async Task<int> ActualizarAsync(int id, Cliente cliente)
     {

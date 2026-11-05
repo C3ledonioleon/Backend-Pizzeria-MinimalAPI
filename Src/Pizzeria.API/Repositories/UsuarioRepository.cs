@@ -1,3 +1,4 @@
+
 using Dapper;
 using Pizzeria.API.Data;
 using Pizzeria.API.Models;
@@ -14,90 +15,54 @@ namespace Pizzeria.API.Repositories
             _connectionFactory = connectionFactory;
         }
 
-        public async Task<Usuario?> ObtenerPorEmailAsync(string email)
+        public async Task<Usuario?> ObtenerPorUsuarioOEmailAsync(string usuarioOEmail)
         {
             using var connection = _connectionFactory.CrearConexion();
 
             const string sql = @"
                 SELECT
                     u.IdUsuario,
+                    u.Username,
                     u.Email,
                     u.Password,
                     u.Rol,
                     c.IdCliente
                 FROM Usuario u
                 LEFT JOIN Cliente c ON c.IdUsuario = u.IdUsuario
-                WHERE u.Email = @Email";
+                WHERE LOWER(u.Username) = LOWER(@UsuarioOEmail)
+                OR LOWER(u.Email) = LOWER(@UsuarioOEmail)
+                LIMIT 1";
 
             return await connection.QuerySingleOrDefaultAsync<Usuario>(
                 sql,
-                new { Email = email }
+                new { UsuarioOEmail = usuarioOEmail.Trim() }
             );
         }
 
-        public async Task<Usuario> RegistrarClienteAsync(
-            Usuario usuario,
-            Cliente cliente)
+        public async Task<Usuario> RegistrarAsync(Usuario usuario)
         {
             using var connection = _connectionFactory.CrearConexion();
 
-            connection.Open();
+            const string sql = @"
+                INSERT INTO Usuario (Username, Email, Password, Rol)
+                VALUES (@Username, @Email, @Password, @Rol);
 
-            using var transaction = connection.BeginTransaction();
+                SELECT LAST_INSERT_ID();";
 
-            try
-            {
-                const string sqlUsuario = @"
-                    INSERT INTO Usuario (Email, Password, Rol)
-                    VALUES (@Email, @Password, @Rol);
+            var idUsuario = await connection.QuerySingleAsync<int>(
+                sql,
+                new
+                {
+                    usuario.Username,
+                    usuario.Email,
+                    usuario.Password,
+                    Rol = (int)usuario.Rol
+                }
+            );
 
-                    SELECT LAST_INSERT_ID();";
+            usuario.IdUsuario = idUsuario;
 
-                var idUsuario = await connection.QuerySingleAsync<int>(
-                    sqlUsuario,
-                    new
-                    {
-                        usuario.Email,
-                        usuario.Password,
-                        Rol = (int)usuario.Rol
-                    },
-                    transaction
-                );
-
-                const string sqlCliente = @"
-                    INSERT INTO Cliente
-                    (IdUsuario, Nombre, Apellido, Email, Telefono, Direccion)
-                    VALUES
-                    (@IdUsuario, @Nombre, @Apellido, @Email, @Telefono, @Direccion);
-
-                    SELECT LAST_INSERT_ID();";
-
-                var idCliente = await connection.QuerySingleAsync<int>(
-                    sqlCliente,
-                    new
-                    {
-                        IdUsuario = idUsuario,
-                        cliente.Nombre,
-                        cliente.Apellido,
-                        cliente.Email,
-                        cliente.Telefono,
-                        cliente.Direccion
-                    },
-                    transaction
-                );
-
-                transaction.Commit();
-
-                usuario.IdUsuario = idUsuario;
-                usuario.IdCliente = idCliente;
-
-                return usuario;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            return usuario;
         }
     }
 }

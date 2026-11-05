@@ -1,3 +1,4 @@
+
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Enums;
 using Pizzeria.API.Models;
@@ -15,14 +16,17 @@ namespace Pizzeria.API.Services
             _usuarioRepository = usuarioRepository;
         }
 
+        // REGISTRO
         public async Task<UsuarioRespuestaDTO> RegistrarAsync(
             RegistrarUsuarioDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Nombre) ||
-                string.IsNullOrWhiteSpace(dto.Apellido) ||
+            if (dto == null)
+            {
+                throw new ArgumentNullException(nameof(dto));
+            }
+
+            if (string.IsNullOrWhiteSpace(dto.Username) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Telefono) ||
-                string.IsNullOrWhiteSpace(dto.Direccion) ||
                 string.IsNullOrWhiteSpace(dto.Contrasena))
             {
                 throw new ArgumentException(
@@ -30,7 +34,10 @@ namespace Pizzeria.API.Services
                 );
             }
 
-            if (!dto.Email.Contains('@'))
+            string username = dto.Username.Trim();
+            string email = dto.Email.Trim().ToLowerInvariant();
+
+            if (!email.Contains('@'))
             {
                 throw new ArgumentException("El email no es válido.");
             }
@@ -42,64 +49,68 @@ namespace Pizzeria.API.Services
                 );
             }
 
-            var email = dto.Email.Trim().ToLowerInvariant();
-
+            // Comprobar si ya existe el nombre de usuario
             var usuarioExistente =
-                await _usuarioRepository.ObtenerPorEmailAsync(email);
+                await _usuarioRepository.ObtenerPorUsuarioOEmailAsync(username);
 
             if (usuarioExistente != null)
+            {
+                throw new InvalidOperationException(
+                    "Ese nombre de usuario ya está registrado."
+                );
+            }
+
+            // Comprobar si ya existe el email
+            var emailExistente =
+                await _usuarioRepository.ObtenerPorUsuarioOEmailAsync(email);
+
+            if (emailExistente != null)
             {
                 throw new InvalidOperationException(
                     "Ya existe una cuenta registrada con ese email."
                 );
             }
 
-            // Generamos el hash de la contraseña.
-                string passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
-            // El registro público siempre crea un Cliente.
+            // Proteger la contraseña
+            string password =
+                BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
+
+            // Crear usuario con rol Cliente
             var usuario = new Usuario(
+                username,
                 email,
-                passwordHash,
+                password,
                 RolUsuario.Cliente
             );
 
-            var cliente = new Cliente(
-                dto.Nombre.Trim(),
-                dto.Apellido.Trim(),
-                email,
-                dto.Telefono.Trim(),
-                dto.Direccion.Trim()
-            );
-
             var usuarioCreado =
-                await _usuarioRepository.RegistrarClienteAsync(
-                    usuario,
-                    cliente
-                );
+                await _usuarioRepository.RegistrarAsync(usuario);
 
             return ConvertirRespuesta(usuarioCreado);
         }
 
-        public async Task<UsuarioRespuestaDTO?> LoginAsync(
-            LoginDTO dto)
+        // INICIO DE SESIÓN
+        public async Task<UsuarioRespuestaDTO?> LoginAsync(LoginDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.Email) ||
+            if (dto == null ||
+                string.IsNullOrWhiteSpace(dto.UsuarioOEmail) ||
                 string.IsNullOrWhiteSpace(dto.Contrasena))
             {
                 return null;
             }
 
-            var email = dto.Email.Trim().ToLowerInvariant();
+            string identificador = dto.UsuarioOEmail.Trim();
 
             var usuario =
-                await _usuarioRepository.ObtenerPorEmailAsync(email);
+                await _usuarioRepository.ObtenerPorUsuarioOEmailAsync(
+                    identificador
+                );
 
             if (usuario == null)
             {
                 return null;
             }
 
-            // Comparamos la contraseña ingresada con el hash guardado.
             bool contrasenaCorrecta = BCrypt.Net.BCrypt.Verify(
                 dto.Contrasena,
                 usuario.Password
@@ -113,13 +124,15 @@ namespace Pizzeria.API.Services
             return ConvertirRespuesta(usuario);
         }
 
+        // CONVERTIR RESPUESTA
         private static UsuarioRespuestaDTO ConvertirRespuesta(
             Usuario usuario)
         {
             return new UsuarioRespuestaDTO
             {
                 IdUsuario = usuario.IdUsuario,
-                IdCliente = usuario.IdCliente,
+                IdCliente = usuario.IdCliente, 
+                Username = usuario.Username,
                 Email = usuario.Email,
                 Rol = usuario.Rol
             };
