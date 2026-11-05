@@ -1,4 +1,5 @@
 using Pizzeria.API.DTOs;
+using Pizzeria.API.Models;
 using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints
@@ -7,52 +8,64 @@ namespace Pizzeria.API.Endpoints
     {
         public static void MapUsuarioEndpoints(this WebApplication app)
         {
-            var grupo = app.MapGroup("/api/usuarios");
+            var usuario = app.MapGroup("/api/usuarios");
 
-            // REGISTRO
-            grupo.MapPost("/registro", async (
-                RegistrarUsuarioDTO dto,
-                IUsuarioService usuarioService) =>
+          usuario.WithTags("Usuario");
+
+        // REGISTRO
+        usuario.MapPost("/registro", async (
+            RegistrarUsuarioDTO dto,
+            IUsuarioService usuarioService) =>
+        {
+            try
             {
-                try
-                {
-                    var usuario = await usuarioService.RegistrarAsync(dto);
+                var resultado = await usuarioService.RegistrarAsync(dto);
 
-                    return Results.Created(
-                        $"/api/usuarios/{usuario.IdUsuario}",
-                        usuario
-                    );
-                }
-                catch (ArgumentException ex)
-                {
-                    return Results.BadRequest(new
-                    {
-                        mensaje = ex.Message
-                    });
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return Results.Conflict(new
-                    {
-                        mensaje = ex.Message
-                    });
-                }
-            });
-
-            // LOGIN
-            grupo.MapPost("/login", async (
-                LoginDTO dto,
-                IUsuarioService usuarioService) =>
+                return Results.Created(
+                    $"/api/usuarios/{resultado.IdUsuario}",
+                    resultado
+                );
+            }
+            catch (ArgumentException ex)
             {
-                var usuario = await usuarioService.LoginAsync(dto);
+                return Results.BadRequest(new
+                {
+                    mensaje = ex.Message
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Conflict(new
+                {
+                    mensaje = ex.Message
+                });
+            }
+        });
 
-                if (usuario == null)
+        // LOGIN
+        usuario.MapPost("/login", async (
+            LoginDTO dto,
+            IUsuarioService usuarioService) =>
+        {
+            try
+            {
+                var resultado = await usuarioService.LoginAsync(dto);
+
+                if (resultado == null)
                 {
                     return Results.Unauthorized();
                 }
 
-                return Results.Ok(usuario);
-            });
-        }
+                return Results.Ok(resultado);
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new
+                {
+                    mensaje = ex.Message
+                });
+            }
+        });
     }
+}
 }
