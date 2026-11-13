@@ -76,6 +76,19 @@
 
                     </a>
 
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <span class="navbar-user">@User.Identity.Name</span>
+                        <form asp-controller="Usuario" asp-action="Logout" method="post" class="navbar-logout">
+                            <button type="submit" class="navbar-auth-link">Cerrar sesión</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Usuario" asp-action="Login">Iniciar sesión</a>
+                        <a asp-controller="Usuario" asp-action="Registro">Registrarme</a>
+                    }
+
                 </div>
 
             </div>

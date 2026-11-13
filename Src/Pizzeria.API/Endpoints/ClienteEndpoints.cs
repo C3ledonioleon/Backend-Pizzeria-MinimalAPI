@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using Pizzeria.API.DTOs;
+using Pizzeria.API.Models;
 using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints;
@@ -31,17 +33,22 @@ public static class ClienteEndpoints
         });
 
 
-        cliente.MapPost("/", async (
-            CreateClienteDto dto,
-            IClienteService service) =>
-        {
-            var cliente = await service.CrearAsync(dto);
+        cliente.MapPost("/", async (CreateClienteDto dto,ClaimsPrincipal usuario,IClienteService service) =>
+    {
+        var idUsuarioClaim = usuario.FindFirst(ClaimTypes.NameIdentifier);
 
-            return Results.Created(
-                $"/api/clientes/{cliente.IdCliente}",
-                cliente);
-        });
+        if (idUsuarioClaim is null)
+            return Results.Unauthorized();
 
+        int idUsuario = int.Parse(idUsuarioClaim.Value);
+
+        var clienteCreado = await service.CrearAsync(idUsuario, dto);
+
+        return Results.Created(
+            $"/api/clientes/{clienteCreado.IdCliente}",
+            clienteCreado);
+    })
+    .RequireAuthorization();
 
         cliente.MapPut("/{id:int}", async (
             int id,

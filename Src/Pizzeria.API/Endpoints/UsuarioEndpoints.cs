@@ -1,5 +1,4 @@
 using Pizzeria.API.DTOs;
-using Pizzeria.API.Models;
 using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints

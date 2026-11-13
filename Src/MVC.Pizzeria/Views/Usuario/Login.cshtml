@@ -1,0 +1,94 @@
+
+@model MVC.Pizzeria.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Iniciar sesión";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card shadow p-4">
+
+                <h2 class="text-center mb-4">
+                    Iniciar sesión
+                </h2>
+
+                @if (TempData["Mensaje"] != null)
+                {
+                    <div class="alert alert-success">
+                        @TempData["Mensaje"]
+                    </div>
+                }
+
+                <form asp-controller="Usuario"
+                      asp-action="Login"
+                      method="post">
+
+                    @if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    }
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="UsuarioOEmail"
+                               class="form-label">
+                            Usuario o Email
+                        </label>
+
+                        <input asp-for="UsuarioOEmail"
+                               class="form-control"
+                               placeholder="Ingresá tu usuario o email" />
+
+                        <span asp-validation-for="UsuarioOEmail"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Contrasena"
+                               class="form-label">
+                            Contraseña
+                        </label>
+
+                        <input asp-for="Contrasena"
+                               class="form-control"
+                               placeholder="Ingresá tu contraseña" />
+
+                        <span asp-validation-for="Contrasena"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-dark w-100">
+                        Iniciar sesión
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-3">
+                    <p>
+                        ¿No tenés una cuenta?
+                        <a asp-controller="Usuario"
+                           asp-action="Registro"
+                           asp-route-returnUrl="@returnUrl">
+                            Registrate acá
+                        </a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

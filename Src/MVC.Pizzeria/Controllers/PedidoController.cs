@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MVC.Pizzeria.Models;
 using MVC.Pizzeria.Services;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MVC.Pizzeria.Controllers;
 
@@ -111,6 +112,7 @@ public IActionResult Cancelar()
 }
 
 [HttpGet]
+[Authorize]
 public IActionResult Confirmar()
 {
     var pedido = ObtenerPedidoDeSesion();
@@ -124,6 +126,7 @@ public IActionResult Confirmar()
 
 [HttpPost]
 [ValidateAntiForgeryToken]
+[Authorize]
 public async Task<IActionResult> Confirmar(ConfirmarPedidoViewModel datos)
 {
     var pedido = ObtenerPedidoDeSesion();

@@ -95,6 +95,32 @@ main[role="main"] {
     text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
 }
 
+.navbar-logout {
+    display: flex;
+    margin: 0;
+}
+
+.navbar-auth-link {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.navbar-auth-link:hover {
+    color: #ffc107;
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
+}
+
+.navbar-user {
+    color: #ffc107;
+    font-weight: 500;
+}
+
 /* =====================================================
    PORTADA / HERO SECTION CON IMAGEN DE FONDO
    ===================================================== */

@@ -4,16 +4,24 @@ using Pizzeria.API.Enums;
 using Pizzeria.API.Models;
 using Pizzeria.API.Repositories.IRepositories;
 using Pizzeria.API.Services.IServices;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Pizzeria.API.Services
 {
     public class UsuarioService : IUsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IConfiguration _configuration;
 
-        public UsuarioService(IUsuarioRepository usuarioRepository)
+        public UsuarioService(
+            IUsuarioRepository usuarioRepository,
+            IConfiguration configuration)
         {
             _usuarioRepository = usuarioRepository;
+            _configuration = configuration;
         }
 
         // REGISTRO
@@ -72,8 +80,7 @@ namespace Pizzeria.API.Services
             }
 
             // Proteger la contraseña
-            string password =
-                BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
+            string password = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
 
             // Crear usuario con rol Cliente
             var usuario = new Usuario(
@@ -111,6 +118,7 @@ namespace Pizzeria.API.Services
                 return null;
             }
 
+            // Verificar contraseña
             bool contrasenaCorrecta = BCrypt.Net.BCrypt.Verify(
                 dto.Contrasena,
                 usuario.Password
@@ -121,7 +129,54 @@ namespace Pizzeria.API.Services
                 return null;
             }
 
-            return ConvertirRespuesta(usuario);
+            // Generar respuesta con JWT
+            var respuesta = ConvertirRespuesta(usuario);
+
+            respuesta.Token = GenerarToken(usuario);
+
+            return respuesta;
+        }
+
+        // GENERAR TOKEN JWT
+        private string GenerarToken(Usuario usuario)
+        {
+            var key = _configuration["Jwt:Key"];
+
+            if (string.IsNullOrWhiteSpace(key) ||
+                Encoding.UTF8.GetByteCount(key) < 32)
+            {
+                throw new InvalidOperationException(
+                    "La clave JWT debe tener al menos 32 bytes."
+                );
+            }
+
+            var secretKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(key)
+            );
+
+            var credentials = new SigningCredentials(
+                secretKey,
+                SecurityAlgorithms.HmacSha256
+            );
+
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier,usuario.IdUsuario.ToString() ),
+                new Claim(ClaimTypes.Name, usuario.Username),
+                new Claim(ClaimTypes.Role,usuario.Rol.ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(
+                    _configuration.GetValue<int>("Jwt:ExpirationMinutes")
+                ),
+                signingCredentials: credentials
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         // CONVERTIR RESPUESTA
@@ -131,7 +186,7 @@ namespace Pizzeria.API.Services
             return new UsuarioRespuestaDTO
             {
                 IdUsuario = usuario.IdUsuario,
-                IdCliente = usuario.IdCliente, 
+                IdCliente = usuario.IdCliente,
                 Username = usuario.Username,
                 Email = usuario.Email,
                 Rol = usuario.Rol

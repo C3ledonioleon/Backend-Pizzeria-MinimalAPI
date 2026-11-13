@@ -53,8 +53,9 @@ public class ClienteRepository : IClienteRepository
 
         const string sql = @"
             UPDATE Cliente
-            SET Nombre =  Email = @Email,
-                Telefono = @Telefono, Direccion = @Direccion
+            SET Email = @Email,
+                Telefono = @Telefono,
+                Direccion = @Direccion
             WHERE IdCliente = @Id";
 
         return await connection.ExecuteAsync(sql, new

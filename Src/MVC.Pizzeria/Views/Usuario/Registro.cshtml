@@ -1,0 +1,102 @@
+
+@model MVC.Pizzeria.Models.RegistroViewModel
+
+@{
+    ViewData["Title"] = "Crear cuenta";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+
+            <div class="card shadow p-4">
+
+                <h2 class="text-center mb-4">
+                    Crear cuenta
+                </h2>
+
+                <form asp-controller="Usuario"
+                      asp-action="Registro"
+                      method="post">
+
+                    @if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    }
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Username"
+                               class="form-label">
+                            Nombre de usuario
+                        </label>
+
+                        <input asp-for="Username"
+                               class="form-control"
+                               placeholder="Elegí un nombre de usuario" />
+
+                        <span asp-validation-for="Username"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email"
+                               class="form-label">
+                            Email
+                        </label>
+
+                        <input asp-for="Email"
+                               class="form-control"
+                               placeholder="ejemplo@gmail.com" />
+
+                        <span asp-validation-for="Email"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Contrasena"
+                               class="form-label">
+                            Contraseña
+                        </label>
+
+                        <input asp-for="Contrasena"
+                               class="form-control"
+                               placeholder="Mínimo 8 caracteres" />
+
+                        <span asp-validation-for="Contrasena"
+                              class="text-danger">
+                        </span>
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-dark w-100">
+                        Registrarme
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-3">
+                    <p>
+                        ¿Ya tenés una cuenta?
+                        <a asp-controller="Usuario"
+                           asp-action="Login"
+                           asp-route-returnUrl="@returnUrl">
+                            Iniciá sesión
+                        </a>
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

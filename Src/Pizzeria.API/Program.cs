@@ -2,14 +2,45 @@ using Pizzeria.API.Endpoints;
 using Pizzeria.API.Data;
 using Pizzeria.API.DependencyInjection;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 
 // Dependency Injection
 
 builder.Services.AddDependencies();
+
+// AUTENTICACIÓN JWT
+
+var jwtKey = builder.Configuration["Jwt:Key"]!;
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtKey)
+            ),
+
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 // Endpoints 
 builder.Services.AddEndpointsApiExplorer();
@@ -36,6 +67,9 @@ if (app.Environment.IsDevelopment())
     // Renderiza la interfaz de Scalar usando los datos nativos
     app.MapScalarApiReference(); 
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Endpoints
 
