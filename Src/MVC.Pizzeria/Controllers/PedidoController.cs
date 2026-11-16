@@ -3,6 +3,7 @@ using MVC.Pizzeria.Models;
 using MVC.Pizzeria.Services;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
+using MVC.Pizzeria.Enums;
 
 namespace MVC.Pizzeria.Controllers;
 
@@ -38,6 +39,69 @@ public async Task<IActionResult> Index()
     pedido.Total = pedido.Detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
 
     return View(pedido);
+}
+
+[Authorize(Roles = "Cliente")]
+public async Task<IActionResult> Historia()
+{
+    var pedidos = await _apiService.GetAsync<List<Pedido>>("api/pedidos/mis-pedidos")
+                  ?? new List<Pedido>();
+    var pizzas = await _apiService.GetAsync<List<Pizza>>("api/pizzas/")
+                 ?? new List<Pizza>();
+
+    foreach (var detalle in pedidos.SelectMany(p => p.Detalles))
+    {
+        var pizza = pizzas.FirstOrDefault(p => p.IdPizza == detalle.IdPizza);
+        if (pizza is null)
+            continue;
+
+        detalle.NombrePizza = pizza.Nombre;
+    }
+
+    return View(pedidos);
+}
+
+[Authorize(Roles = "Administrador")]
+public async Task<IActionResult> Administrar()
+{
+    var pedidos = await _apiService.GetAsync<List<Pedido>>("api/pedidos/")
+                  ?? new List<Pedido>();
+    var pizzas = await _apiService.GetAsync<List<Pizza>>("api/pizzas/")
+                 ?? new List<Pizza>();
+
+    foreach (var detalle in pedidos.SelectMany(p => p.Detalles))
+    {
+        var pizza = pizzas.FirstOrDefault(p => p.IdPizza == detalle.IdPizza);
+        if (pizza is not null)
+            detalle.NombrePizza = pizza.Nombre;
+    }
+
+    return View(pedidos);
+}
+
+[HttpPost]
+[ValidateAntiForgeryToken]
+[Authorize(Roles = "Administrador")]
+public async Task<IActionResult> CambiarEstado(int idPedido, EstadoPedido estado)
+{
+    if (!Enum.IsDefined(estado))
+    {
+        TempData["ErrorAdmin"] = "El estado seleccionado no es válido.";
+        return RedirectToAction(nameof(Administrar));
+    }
+
+    try
+    {
+        await _apiService.PutAsync(
+            $"api/pedidos/{idPedido}/estado?estado={(int)estado}");
+        TempData["MensajeAdmin"] = $"Se actualizó el estado del pedido #{idPedido}.";
+    }
+    catch (HttpRequestException)
+    {
+        TempData["ErrorAdmin"] = "No se pudo actualizar el estado del pedido.";
+    }
+
+    return RedirectToAction(nameof(Administrar));
 }
 
 
@@ -142,16 +206,22 @@ public async Task<IActionResult> Confirmar(ConfirmarPedidoViewModel datos)
 
     try
     {
-        var cliente = await _apiService.PostAsync<CrearClienteRequest, ClienteCreadoResponse>(
-            "api/clientes/",
-            new CrearClienteRequest
-            {
-                Nombre = datos.Nombre ?? string.Empty,
-                Apellido = datos.Apellido ?? string.Empty,
-                Telefono = datos.Telefono ?? string.Empty,
-                Direccion = datos.Direccion ?? string.Empty,
-                Email = datos.Email ?? string.Empty
-            });
+        var cliente = await _apiService.GetOptionalAsync<ClienteCreadoResponse>(
+            "api/clientes/yo");
+
+        if (cliente is null)
+        {
+            cliente = await _apiService.PostAsync<CrearClienteRequest, ClienteCreadoResponse>(
+                "api/clientes/",
+                new CrearClienteRequest
+                {
+                    Nombre = datos.Nombre ?? string.Empty,
+                    Apellido = datos.Apellido ?? string.Empty,
+                    Telefono = datos.Telefono ?? string.Empty,
+                    Direccion = datos.Direccion ?? string.Empty,
+                    Email = datos.Email ?? string.Empty
+                });
+        }
 
         if (cliente is null)
         {

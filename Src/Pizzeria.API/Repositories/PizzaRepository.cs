@@ -35,8 +35,8 @@ public class PizzaRepository : IPizzaRepository
         using var connection = _connectionFactory.CrearConexion();
 
         const string sql = @"
-            INSERT INTO Pizza (Nombre, Precio, Descripcion, Ingredientes)
-            VALUES (@Nombre, @Precio, @Descripcion, @Ingredientes);
+            INSERT INTO Pizza (Nombre, Precio, Descripcion, Ingredientes, ImagenUrl)
+            VALUES (@Nombre, @Precio, @Descripcion, @Ingredientes, @ImagenUrl);
             SELECT LAST_INSERT_ID();";
 
         var nuevoId = await connection.QuerySingleAsync<int>(sql, new
@@ -44,7 +44,8 @@ public class PizzaRepository : IPizzaRepository
             pizza.Nombre,
             pizza.Precio,
             pizza.Descripcion,
-            Ingredientes = string.Join(",", pizza.Ingredientes)
+            Ingredientes = string.Join(",", pizza.Ingredientes),
+            pizza.ImagenUrl
         });
 
         pizza.IdPizza = nuevoId;
@@ -58,7 +59,8 @@ public class PizzaRepository : IPizzaRepository
         const string sql = @"
             UPDATE Pizza
             SET Nombre = @Nombre, Precio = @Precio,
-                Descripcion = @Descripcion, Ingredientes = @Ingredientes
+                Descripcion = @Descripcion, Ingredientes = @Ingredientes,
+                ImagenUrl = @ImagenUrl
             WHERE IdPizza = @Id";
 
         return await connection.ExecuteAsync(sql, new
@@ -67,6 +69,7 @@ public class PizzaRepository : IPizzaRepository
             pizza.Precio,
             pizza.Descripcion,
             Ingredientes = string.Join(",", pizza.Ingredientes),
+            pizza.ImagenUrl,
             Id = id
         });
     }
@@ -85,6 +88,7 @@ public class PizzaRepository : IPizzaRepository
         public decimal Precio { get; set; }
         public string? Descripcion { get; set; }
         public string? Ingredientes { get; set; }
+        public string? ImagenUrl { get; set; }
     }
 
     private static Pizza MapearAPizza(PizzaRow fila) => new()
@@ -93,6 +97,7 @@ public class PizzaRepository : IPizzaRepository
         Nombre = fila.Nombre,
         Precio = fila.Precio,
         Descripcion = fila.Descripcion,
+        ImagenUrl = fila.ImagenUrl,
         Ingredientes = string.IsNullOrEmpty(fila.Ingredientes)
             ? new List<string>()
             : fila.Ingredientes.Split(',').ToList()

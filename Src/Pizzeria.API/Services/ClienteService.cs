@@ -25,6 +25,11 @@ public class ClienteService : IClienteService
         return await _repository.ObtenerPorIdAsync(id);
     }
 
+    public async Task<Cliente?> ObtenerPorUsuarioAsync(int idUsuario)
+    {
+        return await _repository.ObtenerPorUsuarioAsync(idUsuario);
+    }
+
 
     public async Task<Cliente> CrearAsync(int idUsuario, CreateClienteDto dto)
     {

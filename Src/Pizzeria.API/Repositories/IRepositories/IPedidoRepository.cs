@@ -4,6 +4,7 @@ namespace Pizzeria.API.Repositories.IRepositories;
 public interface IPedidoRepository
 {
     Task<List<Pedido>> ObtenerTodosAsync();
+    Task<List<Pedido>> ObtenerPorUsuarioAsync(int idUsuario);
     Task<Pedido?> ObtenerPorIdAsync(int id);
     Task<Pedido> CrearAsync(Pedido pedido);
     Task<int> ActualizarAsync(int id, Pedido pedido);

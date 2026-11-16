@@ -28,6 +28,14 @@ public class ClienteRepository : IClienteRepository
             "SELECT * FROM Cliente WHERE IdCliente = @Id", new { Id = id });
     }
 
+    public async Task<Cliente?> ObtenerPorUsuarioAsync(int idUsuario)
+    {
+        using var connection = _connectionFactory.CrearConexion();
+        return await connection.QuerySingleOrDefaultAsync<Cliente>(
+            "SELECT * FROM Cliente WHERE IdUsuario = @IdUsuario",
+            new { IdUsuario = idUsuario });
+    }
+
         public async Task<Cliente> CrearAsync(Cliente cliente)
         {
             using var connection = _connectionFactory.CrearConexion();

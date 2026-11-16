@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Pizzeria.API.Enums;
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Models;
 using Pizzeria.API.Services.IServices;
@@ -13,12 +14,26 @@ public static class ClienteEndpoints
 
         cliente.WithTags("Cliente");
 
+        cliente.MapGet("/yo", async (
+            ClaimsPrincipal usuario,
+            IClienteService service) =>
+        {
+            var idUsuarioClaim = usuario.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(idUsuarioClaim, out var idUsuario))
+                return Results.Unauthorized();
+
+            var clienteActual = await service.ObtenerPorUsuarioAsync(idUsuario);
+            return clienteActual is null
+                ? Results.NotFound()
+                : Results.Ok(clienteActual);
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Cliente)));
+
 
         cliente.MapGet("/", async (IClienteService service) =>
         {
             var clientes = await service.ObtenerTodosAsync();
             return Results.Ok(clientes);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
 
 
         cliente.MapGet("/{id:int}", async (
@@ -30,7 +45,7 @@ public static class ClienteEndpoints
             return cliente is null
                 ? Results.NotFound()
                 : Results.Ok(cliente);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
 
 
         cliente.MapPost("/", async (CreateClienteDto dto,ClaimsPrincipal usuario,IClienteService service) =>
@@ -48,7 +63,7 @@ public static class ClienteEndpoints
             $"/api/clientes/{clienteCreado.IdCliente}",
             clienteCreado);
     })
-    .RequireAuthorization();
+    .RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Cliente)));
 
         cliente.MapPut("/{id:int}", async (
             int id,
@@ -60,7 +75,7 @@ public static class ClienteEndpoints
             return actualizado
                 ? Results.Ok()
                 : Results.NotFound();
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
 
 
         cliente.MapDelete("/{id:int}", async (
@@ -72,6 +87,6 @@ public static class ClienteEndpoints
             return eliminado
                 ? Results.Ok()
                 : Results.NotFound();
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
     }
 }

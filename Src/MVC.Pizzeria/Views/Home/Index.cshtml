@@ -46,46 +46,31 @@
         {
             @foreach (var pizza in Model)
             {
+                var imagenPizza = pizza.ImagenUrl;
+                if (string.IsNullOrWhiteSpace(imagenPizza))
+                {
+                    imagenPizza = pizza.IdPizza switch
+                    {
+                        1 => "/Images/pizzas/muzzarella.jpeg",
+                        2 => "/Images/pizzas/napolitana.jpeg",
+                        3 => "/Images/pizzas/fugazzeta.jpeg",
+                        4 => "/Images/pizzas/especial.jpeg",
+                        5 => "/Images/pizzas/calabresa.jpeg",
+                        6 => "/Images/pizzas/cuatroquesos.jpeg",
+                        _ => string.Empty
+                    };
+                }
+
                 <div class="col pizza-reveal">
                     <div class="card h-100 border-0 shadow-lg pizza-card bg-dark-card text-white">
                         
                         <!-- IMAGEN Y BADGE DE PRECIO -->
                         <div class="position-relative overflow-hidden rounded-top">
-                            @if (pizza.IdPizza == 1)
+                            @if (!string.IsNullOrWhiteSpace(imagenPizza))
                             {
-                                <img src="/Images/muzzarella.jpeg" 
-                                class="card-img-top pizza-img" 
-                                alt="Pizza Muzzarella">
-                            }
-                            else if (pizza.IdPizza == 2)
-                            {
-                                <img src="/Images/napolitana.jpeg" 
-                                class="card-img-top pizza-img"
-                                alt="Pizza Napolitana">
-                            }
-                            else if (pizza.IdPizza == 3)
-                            {
-                                <img src="/Images/fugazzeta.jpeg"
-                                class="card-img-top pizza-img"
-                                alt="Pizza Fugazzeta">
-                            }
-                            else if (pizza.IdPizza == 4)
-                            {
-                                <img src="/Images/especial.jpeg"
-                                class="card-img-top pizza-img"
-                                alt="Pizza Especial">
-                            }
-                            else if (pizza.IdPizza == 5)
-                            {
-                                <img src="/Images/calabresa.jpeg"
-                                class="card-img-top pizza-img"
-                                alt="Pizza Calabresa">
-                            }
-                            else if (pizza.IdPizza == 6)
-                            {
-                                <img src="/Images/cuatroquesos.jpeg" 
-                                class="card-img-top pizza-img" 
-                                alt="Pizza Cuatro Quesos">
+                                <img src="@imagenPizza"
+                                     class="card-img-top pizza-img"
+                                     alt="Pizza @pizza.Nombre">
                             }
 
                             <!-- BADGE DE PRECIO DESTACADO -->
@@ -114,12 +99,15 @@
                             }
 
                             <!-- BOTÓN AGREGAR -->
-                            <form asp-controller="Pedido" asp-action="Agregar" method="post" class="mt-auto">
-                                <input type="hidden" name="idPizza" value="@pizza.IdPizza" />
-                                <button type="submit" class="btn btn-warning w-100 fw-bold py-2 btn-cart text-dark">
-                                    <i class="bi bi-cart-plus me-2"></i>Agregar al Pedido
-                                </button>
-                            </form>
+                            @if (!User.IsInRole("Administrador"))
+                            {
+                                <form asp-controller="Pedido" asp-action="Agregar" method="post" class="mt-auto">
+                                    <input type="hidden" name="idPizza" value="@pizza.IdPizza" />
+                                    <button type="submit" class="btn btn-warning w-100 fw-bold py-2 btn-cart text-dark">
+                                        <i class="bi bi-cart-plus me-2"></i>Agregar al Pedido
+                                    </button>
+                                </form>
+                            }
                         </div>
                     </div>
                 </div>

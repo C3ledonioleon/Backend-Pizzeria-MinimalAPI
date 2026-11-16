@@ -64,5 +64,14 @@ namespace Pizzeria.API.Repositories
 
             return usuario;
         }
+
+        public async Task ActualizarContrasenaAsync(int idUsuario, string passwordHash)
+        {
+            using var connection = _connectionFactory.CrearConexion();
+
+            await connection.ExecuteAsync(
+                "UPDATE Usuario SET Password = @Password WHERE IdUsuario = @IdUsuario",
+                new { Password = passwordHash, IdUsuario = idUsuario });
+        }
     }
 }

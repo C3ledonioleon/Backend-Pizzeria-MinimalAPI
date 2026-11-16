@@ -7,7 +7,9 @@ using Pizzeria.API.Services.IServices;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Pizzeria.API.Services
 {
@@ -118,15 +120,20 @@ namespace Pizzeria.API.Services
                 return null;
             }
 
-            // Verificar contraseña
-            bool contrasenaCorrecta = BCrypt.Net.BCrypt.Verify(
-                dto.Contrasena,
-                usuario.Password
-            );
+            var (contrasenaCorrecta, necesitaMigracion) =
+                VerificarContrasena(usuario.Password, dto.Contrasena);
 
             if (!contrasenaCorrecta)
             {
                 return null;
+            }
+
+            if (necesitaMigracion)
+            {
+                usuario.Password = BCrypt.Net.BCrypt.HashPassword(dto.Contrasena);
+                await _usuarioRepository.ActualizarContrasenaAsync(
+                    usuario.IdUsuario,
+                    usuario.Password);
             }
 
             // Generar respuesta con JWT
@@ -135,6 +142,34 @@ namespace Pizzeria.API.Services
             respuesta.Token = GenerarToken(usuario);
 
             return respuesta;
+        }
+
+        private static (bool EsValida, bool NecesitaMigracion) VerificarContrasena(
+            string almacenada,
+            string ingresada)
+        {
+            if (Regex.IsMatch(
+                    almacenada,
+                    @"^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$",
+                    RegexOptions.CultureInvariant))
+            {
+                return (BCrypt.Net.BCrypt.Verify(ingresada, almacenada), false);
+            }
+
+            if (almacenada.StartsWith("$2", StringComparison.Ordinal))
+                return (false, false);
+
+            var bytesIngresados = Encoding.UTF8.GetBytes(ingresada);
+            var bytesAlmacenados = Encoding.UTF8.GetBytes(almacenada);
+            if (CryptographicOperations.FixedTimeEquals(bytesIngresados, bytesAlmacenados))
+                return (true, true);
+
+            if (!Regex.IsMatch(almacenada, @"\A[0-9a-fA-F]{64}\z"))
+                return (false, false);
+
+            var hashIngresado = SHA256.HashData(bytesIngresados);
+            var hashAlmacenado = Convert.FromHexString(almacenada);
+            return (CryptographicOperations.FixedTimeEquals(hashIngresado, hashAlmacenado), true);
         }
 
         // GENERAR TOKEN JWT

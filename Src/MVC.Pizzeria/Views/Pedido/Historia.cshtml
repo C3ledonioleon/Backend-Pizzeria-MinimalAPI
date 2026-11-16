@@ -1,0 +1,64 @@
+@model IReadOnlyList<MVC.Pizzeria.Models.Pedido>
+
+@{
+    ViewData["Title"] = "Mis pedidos";
+}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="fw-bold">Historial de pedidos</h1>
+        <p class="text-muted">Consultá tus compras y el estado de cada pedido.</p>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info text-center">
+            Todavía no tenés pedidos realizados.
+        </div>
+    }
+    else
+    {
+        @foreach (var pedido in Model)
+        {
+            <section class="card shadow-sm mb-4">
+                <div class="card-header d-flex flex-wrap justify-content-between gap-2">
+                    <strong>Pedido #@pedido.IdPedido</strong>
+                    <span>@pedido.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+                        <span>
+                            Estado:
+                            <strong>@pedido.Estado</strong>
+                        </span>
+                        <span>
+                            Cantidad:
+                            <strong>@pedido.Detalles.Sum(detalle => detalle.Cantidad) unidad(es)</strong>
+                        </span>
+                        <span>
+                            Total:
+                            <strong>$@pedido.Total.ToString("N0")</strong>
+                        </span>
+                    </div>
+
+                    <ul class="mb-0">
+                        @foreach (var detalle in pedido.Detalles)
+                        {
+                            <li>
+                                @detalle.Cantidad x
+                                @(string.IsNullOrWhiteSpace(detalle.NombrePizza)
+                                    ? $"Pizza #{detalle.IdPizza}"
+                                    : detalle.NombrePizza)
+                                — $@((detalle.Cantidad * detalle.PrecioUnitario).ToString("N0"))
+                                @if (!string.IsNullOrWhiteSpace(detalle.Observaciones))
+                                {
+                                    <span class="text-muted">(@detalle.Observaciones)</span>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </section>
+        }
+    }
+</div>

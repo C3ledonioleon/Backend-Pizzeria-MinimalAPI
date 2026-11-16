@@ -1,0 +1,69 @@
+@model IReadOnlyList<MVC.Pizzeria.Models.Pedido>
+@using MVC.Pizzeria.Enums
+
+@{
+    ViewData["Title"] = "Administrar pedidos";
+}
+
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">Administrar pedidos</h1>
+
+    @if (TempData["MensajeAdmin"] is string mensaje)
+    {
+        <div class="alert alert-success">@mensaje</div>
+    }
+    @if (TempData["ErrorAdmin"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">Todavía no hay pedidos.</div>
+    }
+    else
+    {
+        @foreach (var pedido in Model)
+        {
+            <section class="card shadow-sm mb-4">
+                <div class="card-header d-flex flex-wrap justify-content-between gap-2">
+                    <strong>Pedido #@pedido.IdPedido</strong>
+                    <span>@pedido.FechaHora.ToString("dd/MM/yyyy HH:mm")</span>
+                </div>
+                <div class="card-body">
+                    <p>
+                        Cliente #@pedido.IdCliente ·
+                        <strong>$@pedido.Total.ToString("N0")</strong> ·
+                        @pedido.Detalles.Sum(detalle => detalle.Cantidad) unidad(es)
+                    </p>
+                    <ul>
+                        @foreach (var detalle in pedido.Detalles)
+                        {
+                            <li>
+                                @detalle.Cantidad x
+                                @(string.IsNullOrWhiteSpace(detalle.NombrePizza)
+                                    ? $"Pizza #{detalle.IdPizza}"
+                                    : detalle.NombrePizza)
+                            </li>
+                        }
+                    </ul>
+                    <form asp-action="CambiarEstado" method="post" class="row g-2 align-items-end">
+                        <input type="hidden" name="idPedido" value="@pedido.IdPedido" />
+                        <div class="col-auto">
+                            <label class="form-label" for="estado-@pedido.IdPedido">Estado</label>
+                            <select class="form-select" id="estado-@pedido.IdPedido" name="estado">
+                                @foreach (var estado in Enum.GetValues<EstadoPedido>())
+                                {
+                                    <option value="@((int)estado)" selected="@(estado == pedido.Estado)">@estado</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-primary">Actualizar estado</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        }
+    }
+</div>

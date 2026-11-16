@@ -1,0 +1,133 @@
+@model IReadOnlyList<MVC.Pizzeria.Models.Pizza>
+
+@{
+    ViewData["Title"] = "Menú de pizzas";
+}
+
+<div class="container py-5">
+    <h1 class="fw-bold mb-4">Menú de pizzas</h1>
+
+    @if (TempData["MensajeAdmin"] is string mensaje)
+    {
+        <div class="alert alert-success">@mensaje</div>
+    }
+    @if (TempData["ErrorAdmin"] is string error)
+    {
+        <div class="alert alert-danger">@error</div>
+    }
+
+    @if (User.IsInRole("Administrador"))
+    {
+        <section class="card shadow-sm mb-4">
+            <div class="card-header fw-bold">Agregar pizza</div>
+            <div class="card-body">
+                <form asp-action="Crear" method="post" enctype="multipart/form-data" class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label" for="nombreNueva">Nombre</label>
+                        <input id="nombreNueva" name="Nombre" class="form-control" required maxlength="100" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" for="precioNuevo">Precio</label>
+                        <input id="precioNuevo" name="Precio" type="number" step="0.01" min="0.01" class="form-control" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="descripcionNueva">Descripción</label>
+                        <input id="descripcionNueva" name="Descripcion" class="form-control" required maxlength="300" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="ingredientesNuevos">Ingredientes</label>
+                        <input id="ingredientesNuevos" name="ingredientes" class="form-control" placeholder="Separados por coma" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="imagenNueva">Subir imagen (JPG, PNG o WebP; máximo 5 MB)</label>
+                        <input id="imagenNueva" name="imagen" type="file" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label" for="imagenUrlNueva">O pegar URL de imagen</label>
+                        <input id="imagenUrlNueva" name="imagenUrl" type="url" maxlength="255" class="form-control" placeholder="https://..." />
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button class="btn btn-success w-100" type="submit">Agregar</button>
+                    </div>
+                </form>
+                <small class="form-text">Elegí una opción: subir un archivo o pegar una URL.</small>
+            </div>
+        </section>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">No hay pizzas en el menú.</div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var pizza in Model)
+            {
+                <div class="col-12 col-lg-6">
+                    <section class="card shadow-sm h-100">
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <div class="card-header fw-bold">Pizza #@pizza.IdPizza</div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrWhiteSpace(pizza.ImagenUrl))
+                                {
+                                    <img src="@pizza.ImagenUrl" alt="Imagen de @pizza.Nombre" class="img-fluid rounded mb-3" style="max-height: 220px; object-fit: cover;" />
+                                }
+                                <form asp-action="Editar" method="post" enctype="multipart/form-data" class="row g-3">
+                                    <input type="hidden" name="IdPizza" value="@pizza.IdPizza" />
+                                    <div class="col-md-6">
+                                        <label class="form-label">Nombre</label>
+                                        <input name="Nombre" value="@pizza.Nombre" class="form-control" required maxlength="100" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Precio</label>
+                                        <input name="Precio" value="@pizza.Precio" type="number" step="0.01" min="0.01" class="form-control" required />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Descripción</label>
+                                        <input name="Descripcion" value="@pizza.Descripcion" class="form-control" required maxlength="300" />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Ingredientes</label>
+                                        <input name="ingredientes" value="@string.Join(", ", pizza.Ingredientes)" class="form-control" />
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">Reemplazar imagen (opcional)</label>
+                                        <input name="imagen" type="file" accept=".jpg,.jpeg,.png,.webp" class="form-control" />
+                                        <small class="form-text">JPG, PNG o WebP; máximo 5 MB.</small>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label">O reemplazar con una URL</label>
+                                        <input name="imagenUrl" type="url" maxlength="255" class="form-control" placeholder="https://..." />
+                                    </div>
+                                    <div class="col-12 d-flex gap-2">
+                                        <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                                    </div>
+                                </form>
+                                <form asp-action="Eliminar" method="post" class="mt-2"
+                                      onsubmit="return confirm('¿Eliminar esta pizza del menú?');">
+                                    <input type="hidden" name="idPizza" value="@pizza.IdPizza" />
+                                    <button class="btn btn-outline-danger" type="submit">Eliminar</button>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="card-body">
+                                @if (!string.IsNullOrWhiteSpace(pizza.ImagenUrl))
+                                {
+                                    <img src="@pizza.ImagenUrl" alt="Pizza @pizza.Nombre" class="img-fluid rounded mb-3" style="max-height: 240px; width: 100%; object-fit: cover;" />
+                                }
+                                <h2 class="h4">@pizza.Nombre</h2>
+                                <p>@pizza.Descripcion</p>
+                                <p class="mb-1"><strong>Precio:</strong> $@pizza.Precio.ToString("N0")</p>
+                                <p class="mb-0"><strong>Ingredientes:</strong> @string.Join(", ", pizza.Ingredientes)</p>
+                            </div>
+                        }
+                    </section>
+                </div>
+            }
+        </div>
+    }
+</div>

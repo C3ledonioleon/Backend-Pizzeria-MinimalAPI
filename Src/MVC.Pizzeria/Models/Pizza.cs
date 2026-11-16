@@ -7,4 +7,5 @@ public class Pizza
     public decimal Precio { get; set; }
     public string Descripcion { get; set; } = string.Empty;
     public List<string> Ingredientes { get; set; } = new();
+    public string? ImagenUrl { get; set; }
 }

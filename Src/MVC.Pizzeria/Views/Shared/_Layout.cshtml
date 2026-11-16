@@ -64,11 +64,19 @@
 
                     </a>
 
-                    <a asp-area="" asp-controller="Pedido" asp-action="Index">
-
-                    🛒 Pedido
-
-                    </a>
+                    @if (User.IsInRole("Administrador"))
+                    {
+                        <a asp-controller="Pizza" asp-action="Index">Administrar pizzas</a>
+                        <a asp-controller="Pedido" asp-action="Administrar">Administrar pedidos</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Pedido" asp-action="Index">🛒 Pedido</a>
+                        @if (User.IsInRole("Cliente"))
+                        {
+                            <a asp-controller="Pedido" asp-action="Historia">Mis pedidos</a>
+                        }
+                    }
 
                     <a href="#">
 

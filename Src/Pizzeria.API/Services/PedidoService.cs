@@ -40,6 +40,19 @@ public class PedidoService : IPedidoService
 
         return pedidos;
     }
+
+    public async Task<List<Pedido>> ObtenerPorUsuarioAsync(int idUsuario)
+    {
+        var pedidos = await _pedidoRepository.ObtenerPorUsuarioAsync(idUsuario);
+
+        foreach (var pedido in pedidos)
+        {
+            pedido.Detalles = await _detalleRepository.ObtenerPorPedidoAsync(pedido.IdPedido);
+        }
+
+        return pedidos;
+    }
+
     public async Task<Pedido?> ObtenerPorIdAsync(int id)
     {
         var pedido = await _pedidoRepository.ObtenerPorIdAsync(id);
@@ -52,12 +65,12 @@ public class PedidoService : IPedidoService
         return pedido;
     }
 
-    public async Task<Pedido> CrearAsync(CreatePedidoDto dto)
+    public async Task<Pedido> CrearAsync(int idUsuario, CreatePedidoDto dto)
     {
-        var cliente = await _clienteRepository.ObtenerPorIdAsync(dto.IdCliente)
-            ?? throw new ArgumentException($"No existe un cliente con id {dto.IdCliente}");
+        var cliente = await _clienteRepository.ObtenerPorUsuarioAsync(idUsuario)
+            ?? throw new ArgumentException("La cuenta no tiene un perfil de cliente.");
 
-        var pedido = new Pedido(dto.IdCliente);
+        var pedido = new Pedido(cliente.IdCliente);
         decimal total = 0;
 
         foreach (var detalleDto in dto.Detalles)

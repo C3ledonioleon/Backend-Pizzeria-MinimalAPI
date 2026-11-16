@@ -22,6 +22,20 @@ public class PedidoRepository : IPedidoRepository
             "SELECT * FROM Pedido")).ToList();
     }
 
+    public async Task<List<Pedido>> ObtenerPorUsuarioAsync(int idUsuario)
+    {
+        using var connection = _connectionFactory.CrearConexion();
+
+        const string sql = @"
+            SELECT p.*
+            FROM Pedido p
+            INNER JOIN Cliente c ON c.IdCliente = p.IdCliente
+            WHERE c.IdUsuario = @IdUsuario
+            ORDER BY p.FechaHora DESC";
+
+        return (await connection.QueryAsync<Pedido>(sql, new { IdUsuario = idUsuario })).ToList();
+    }
+
     public async Task<Pedido?> ObtenerPorIdAsync(int id)
     {
         using var connection = _connectionFactory.CrearConexion();

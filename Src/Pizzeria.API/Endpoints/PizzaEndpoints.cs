@@ -1,4 +1,5 @@
 using Pizzeria.API.DTOs;
+using Pizzeria.API.Enums;
 using Pizzeria.API.Services.IServices;
 
 namespace Pizzeria.API.Endpoints;
@@ -33,7 +34,7 @@ public static class PizzaEndpoints
             return Results.Created(
                 $"/api/pizzas/{pizza.IdPizza}",
                 pizza);
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
 
 
 
@@ -44,7 +45,7 @@ public static class PizzaEndpoints
             return filas > 0
                 ? Results.Ok()
                 : Results.NotFound();
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
 
         pizza.MapDelete("/{id:int}", async (int id, IPizzaService service) =>
         {
@@ -53,6 +54,6 @@ public static class PizzaEndpoints
             return filas > 0
                 ? Results.Ok()
                 : Results.NotFound();
-        });
+        }).RequireAuthorization(policy => policy.RequireRole(nameof(RolUsuario.Administrador)));
     }
 }

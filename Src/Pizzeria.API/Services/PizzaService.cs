@@ -27,7 +27,8 @@ public class PizzaService : IPizzaService
             dto.Precio,
             dto.Descripcion)
         {
-            Ingredientes = dto.Ingredientes
+            Ingredientes = dto.Ingredientes,
+            ImagenUrl = dto.ImagenUrl
         };
 
         return _repository.CrearAsync(pizza);
@@ -41,7 +42,8 @@ public class PizzaService : IPizzaService
             dto.Precio,
             dto.Descripcion)
         {
-            Ingredientes = dto.Ingredientes
+            Ingredientes = dto.Ingredientes,
+            ImagenUrl = dto.ImagenUrl
         };
 
         return _repository.ActualizarAsync(id, pizza);

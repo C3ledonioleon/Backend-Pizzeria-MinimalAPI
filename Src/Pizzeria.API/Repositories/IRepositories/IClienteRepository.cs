@@ -6,6 +6,7 @@ public interface IClienteRepository
 {
     Task<List<Cliente>> ObtenerTodosAsync();
     Task<Cliente?> ObtenerPorIdAsync(int id);
+    Task<Cliente?> ObtenerPorUsuarioAsync(int idUsuario);
     Task<Cliente> CrearAsync(Cliente cliente);
     Task<int> ActualizarAsync(int id, Cliente cliente);
     Task<int> EliminarAsync(int id);

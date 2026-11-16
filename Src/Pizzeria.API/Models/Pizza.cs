@@ -7,6 +7,7 @@ public class Pizza
     public decimal Precio { get; set; }
     public string Descripcion { get; set; }
     public List<string> Ingredientes { get; set; } = new();
+    public string? ImagenUrl { get; set; }
 
     public Pizza() { }
 

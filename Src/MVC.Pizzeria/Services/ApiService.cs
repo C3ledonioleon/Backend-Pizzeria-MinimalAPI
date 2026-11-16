@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Net;
 using Microsoft.AspNetCore.Authentication;
 
 namespace MVC.Pizzeria.Services
@@ -49,6 +50,19 @@ namespace MVC.Pizzeria.Services
             return await response.Content.ReadFromJsonAsync<T>();
         }
 
+        public async Task<T?> GetOptionalAsync<T>(string endpoint)
+        {
+            using var request = await CrearRequestAsync(
+                HttpMethod.Get, endpoint);
+
+            using var response = await _httpClient.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.NotFound)
+                return default;
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadFromJsonAsync<T>();
+        }
+
         // POST
         public async Task<TResponse?> PostAsync<TRequest, TResponse>(
             string endpoint,
@@ -64,6 +78,29 @@ namespace MVC.Pizzeria.Services
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadFromJsonAsync<TResponse>();
+        }
+
+        public async Task PutAsync<TRequest>(string endpoint, TRequest content)
+        {
+            using var request = await CrearRequestAsync(HttpMethod.Put, endpoint);
+            request.Content = JsonContent.Create(content);
+
+            using var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task PutAsync(string endpoint)
+        {
+            using var request = await CrearRequestAsync(HttpMethod.Put, endpoint);
+            using var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task DeleteAsync(string endpoint)
+        {
+            using var request = await CrearRequestAsync(HttpMethod.Delete, endpoint);
+            using var response = await _httpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

@@ -7,10 +7,11 @@ namespace Pizzeria.API.Services.IServices;
 public interface IPedidoService
 {
     Task<List<Pedido>> ObtenerTodosAsync();
+    Task<List<Pedido>> ObtenerPorUsuarioAsync(int idUsuario);
 
     Task<Pedido?> ObtenerPorIdAsync(int id);
 
-    Task<Pedido> CrearAsync(CreatePedidoDto dto);
+    Task<Pedido> CrearAsync(int idUsuario, CreatePedidoDto dto);
 
     Task<Pedido?> CambiarEstadoAsync(int idPedido, EstadoPedido nuevoEstado);
 

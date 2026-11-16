@@ -7,5 +7,7 @@ namespace Pizzeria.API.Repositories.IRepositories
         Task<Usuario?> ObtenerPorUsuarioOEmailAsync(string usuarioOEmail);
 
         Task<Usuario> RegistrarAsync(Usuario usuario);
+
+        Task ActualizarContrasenaAsync(int idUsuario, string passwordHash);
     }
 }
