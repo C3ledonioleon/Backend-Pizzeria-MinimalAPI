@@ -127,12 +127,11 @@ public IActionResult Agregar(int idPizza)
         });
     }
 
-
     GuardarPedidoEnSesion(pedido);
 
     TempData["PizzaAgregada"] = "¡Pizza agregada a tu pedido!";
 
-    return Redirect("/Home/Index#menu");
+    return Redirect($"/Home/Index#pizza-{idPizza}");
 }
 
 [HttpPost]

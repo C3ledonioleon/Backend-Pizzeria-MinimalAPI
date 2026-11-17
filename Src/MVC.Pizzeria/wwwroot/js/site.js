@@ -59,4 +59,19 @@ document.addEventListener("DOMContentLoaded", () => {
 	}, { threshold: 0.15 });
 
 	pizzas.forEach((pizza) => observer.observe(pizza));
+
+	const pizzaToast = document.querySelector(".pizza-toast");
+
+	if (pizzaToast) {
+		let toastTimer;
+
+		const closeToast = () => {
+			clearTimeout(toastTimer);
+			pizzaToast.classList.add("is-leaving");
+			window.setTimeout(() => pizzaToast.remove(), 350);
+		};
+
+		pizzaToast.querySelector(".pizza-toast__close")?.addEventListener("click", closeToast);
+		toastTimer = window.setTimeout(closeToast, 5000);
+	}
 });

@@ -34,8 +34,13 @@
 <section class="menu-section py-4" id="menu">
     @if (TempData["PizzaAgregada"] is string mensajePizzaAgregada)
     {
-        <div class="container">
-            <div class="alert alert-success" role="status">@mensajePizzaAgregada</div>
+        <div class="pizza-toast" role="status" aria-live="polite" aria-atomic="true">
+            <div class="pizza-toast__icon" aria-hidden="true">🍕</div>
+            <div class="pizza-toast__content">
+                <span>@mensajePizzaAgregada</span>
+            </div>
+            <button type="button" class="pizza-toast__close" aria-label="Cerrar notificación">&times;</button>
+            <div class="pizza-toast__progress"></div>
         </div>
     }
 
@@ -68,7 +73,7 @@
                     };
                 }
 
-                <div class="col pizza-reveal">
+                <div id="pizza-@pizza.IdPizza" class="col pizza-reveal">
                     <div class="card h-100 border-0 shadow-lg pizza-card bg-dark-card text-white">
                         
                         <!-- IMAGEN Y BADGE DE PRECIO -->

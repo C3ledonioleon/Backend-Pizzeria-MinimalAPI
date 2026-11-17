@@ -264,6 +264,7 @@ main[role="main"] {
     opacity: 0;
     transform: translateY(28px);
     transition: opacity 0.65s ease, transform 0.65s ease;
+    scroll-margin-top: 88px;
 }
 
 .pizza-reveal.is-visible {
@@ -313,6 +314,123 @@ main[role="main"] {
 
 .navbar-toggle.is-open span:nth-child(3) {
     transform: translateY(-7px) rotate(-45deg);
+}
+
+/* =====================================================
+   NOTIFICACIÓN DE PIZZA AGREGADA
+   ===================================================== */
+.pizza-toast {
+    position: fixed;
+    top: 92px;
+    right: 24px;
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: min(390px, calc(100vw - 32px));
+    padding: 16px 48px 16px 16px;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(135deg, #202020 0%, #151515 100%);
+    border: 1px solid rgba(255, 193, 7, 0.75);
+    border-left: 6px solid #ffc107;
+    border-radius: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 24px rgba(255, 193, 7, 0.16);
+    animation: pizza-toast-enter 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.pizza-toast__icon {
+    display: grid;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    font-size: 28px;
+    background: rgba(255, 193, 7, 0.14);
+    border-radius: 50%;
+    animation: pizza-toast-bounce 1.2s ease-in-out 0.55s 2;
+}
+
+.pizza-toast__content {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+
+.pizza-toast__content strong {
+    color: #ffc107;
+    font-size: 1.05rem;
+}
+
+.pizza-toast__content span {
+    margin-top: 4px;
+    color: #f5f5f5;
+}
+
+.pizza-toast__close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    padding: 0;
+    color: #aaa;
+    background: transparent;
+    border: 0;
+    font-size: 24px;
+    line-height: 1;
+}
+
+.pizza-toast__close:hover {
+    color: #fff;
+}
+
+.pizza-toast__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #ffc107;
+    transform-origin: left;
+    animation: pizza-toast-progress 5s linear forwards;
+}
+
+.pizza-toast.is-leaving {
+    animation: pizza-toast-leave 0.35s ease forwards;
+}
+
+@keyframes pizza-toast-enter {
+    from { opacity: 0; transform: translateX(45px) scale(0.92); }
+    to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes pizza-toast-leave {
+    to { opacity: 0; transform: translateX(45px) scale(0.96); }
+}
+
+@keyframes pizza-toast-bounce {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.12) rotate(-8deg); }
+}
+
+@keyframes pizza-toast-progress {
+    from { transform: scaleX(1); }
+    to { transform: scaleX(0); }
+}
+
+@media (max-width: 576px) {
+    .pizza-toast {
+        top: 76px;
+        right: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pizza-toast,
+    .pizza-toast__icon,
+    .pizza-toast__progress {
+        animation-duration: 0.01ms;
+        animation-iteration-count: 1;
+    }
 }
 
 /* RESPONSIVE */
