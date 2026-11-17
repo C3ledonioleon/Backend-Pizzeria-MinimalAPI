@@ -21,7 +21,7 @@
         <section class="card shadow-sm mb-4">
             <div class="card-header fw-bold">Agregar pizza</div>
             <div class="card-body">
-                <form asp-action="Crear" method="post" enctype="multipart/form-data" class="row g-3">
+                <form id="crearPizzaForm" asp-action="Crear" method="post" enctype="multipart/form-data" class="row g-3">
                     <div class="col-md-3">
                         <label class="form-label" for="nombreNueva">Nombre</label>
                         <input id="nombreNueva" name="Nombre" class="form-control" required maxlength="100" />
@@ -44,14 +44,22 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label" for="imagenUrlNueva">O pegar URL de imagen</label>
-                        <input id="imagenUrlNueva" name="imagenUrl" type="url" maxlength="255" class="form-control" placeholder="https://..." />
+                        <input id="imagenUrlNueva" name="imagenUrl" type="url" maxlength="255" class="form-control" placeholder="https://.../pizza.jpg" aria-describedby="ayudaImagenUrlNueva" />
                     </div>
                     <div class="col-md-1 d-flex align-items-end">
                         <button class="btn btn-success w-100" type="submit">Agregar</button>
                     </div>
+                    <div class="col-12">
+                        <small id="ayudaImagenUrlNueva" class="form-text">Pegá el enlace directo al archivo de imagen, no la página donde aparece.</small>
+                        <div class="mt-2">
+                            <img id="vistaPreviaImagenNueva" class="img-thumbnail d-none" alt="Vista previa de la imagen de la pizza" style="max-height: 220px;" />
+                            <div id="estadoImagenNueva" class="form-text" role="status" aria-live="polite"></div>
+                        </div>
+                    </div>
                 </form>
                 <small class="form-text">Elegí una opción: subir un archivo o pegar una URL.</small>
             </div>
+
         </section>
     }
 
@@ -129,5 +137,132 @@
                 </div>
             }
         </div>
+
+        @section Scripts {
+            <script>
+                (() => {
+                    const form = document.getElementById("crearPizzaForm");
+                    const urlInput = document.getElementById("imagenUrlNueva");
+                    const fileInput = document.getElementById("imagenNueva");
+                    const preview = document.getElementById("vistaPreviaImagenNueva");
+                    const status = document.getElementById("estadoImagenNueva");
+
+                    if (!form || !urlInput || !fileInput || !preview || !status) {
+                        return;
+                    }
+
+                    let revision = 0;
+                    let urlValidada = "";
+                    let validacionEnCurso = false;
+                    let imagenCargada = Promise.resolve(false);
+
+                    const comprobarImagen = (url) => new Promise((resolve) => {
+                        const imagen = new Image();
+                        let finalizada = false;
+                        const temporizador = window.setTimeout(() => finalizar(false), 10000);
+
+                        const finalizar = (esValida) => {
+                            if (finalizada) {
+                                return;
+                            }
+
+                            finalizada = true;
+                            window.clearTimeout(temporizador);
+                            resolve(esValida);
+                        };
+
+                        imagen.onload = () => finalizar(imagen.naturalWidth > 0 && imagen.naturalHeight > 0);
+                        imagen.onerror = () => finalizar(false);
+                        imagen.src = url;
+                    });
+
+                    const actualizarVistaPrevia = () => {
+                        revision++;
+                        urlValidada = "";
+                        const url = urlInput.value.trim();
+
+                        if (fileInput.files.length > 0) {
+                            preview.classList.add("d-none");
+                            preview.removeAttribute("src");
+                            status.textContent = "Se usará el archivo seleccionado.";
+                            imagenCargada = Promise.resolve(false);
+                            return;
+                        }
+
+                        if (!url) {
+                            preview.classList.add("d-none");
+                            preview.removeAttribute("src");
+                            status.textContent = "";
+                            imagenCargada = Promise.resolve(false);
+                            return;
+                        }
+
+                        const revisionActual = revision;
+                        preview.src = url;
+                        preview.classList.remove("d-none");
+                        status.className = "form-text";
+                        status.textContent = "Comprobando la imagen...";
+
+                        imagenCargada = comprobarImagen(url).then((esValida) => {
+                            if (revisionActual !== revision) {
+                                return false;
+                            }
+
+                            status.classList.toggle("text-danger", !esValida);
+                            status.classList.toggle("text-success", esValida);
+                            status.textContent = esValida
+                                ? "La imagen se puede mostrar."
+                                : "No se pudo cargar como imagen. Usá un enlace directo al archivo o subí la imagen desde tu equipo.";
+
+                            return esValida;
+                        });
+                    };
+
+                    urlInput.addEventListener("input", actualizarVistaPrevia);
+                    fileInput.addEventListener("change", actualizarVistaPrevia);
+
+                    form.addEventListener("submit", async (event) => {
+                        const url = urlInput.value.trim();
+
+                        if (fileInput.files.length > 0 && url) {
+                            event.preventDefault();
+                            status.className = "form-text text-danger";
+                            status.textContent = "Elegí subir un archivo o pegar una URL, no ambas opciones.";
+                            return;
+                        }
+
+                        if (fileInput.files.length > 0 || !url) {
+                            return;
+                        }
+
+                        if (urlValidada === url) {
+                            urlValidada = "";
+                            return;
+                        }
+
+                        event.preventDefault();
+                        if (validacionEnCurso) {
+                            return;
+                        }
+
+                        validacionEnCurso = true;
+                        const revisionActual = revision;
+                        try {
+                            const esValida = await imagenCargada;
+                            if (!esValida
+                                || revisionActual !== revision
+                                || urlInput.value.trim() !== url) {
+                                return;
+                            }
+
+                            urlValidada = url;
+                            form.requestSubmit();
+                        } finally {
+                            validacionEnCurso = false;
+                        }
+                    });
+                })();
+            </script>
+        }
     }
 </div>
