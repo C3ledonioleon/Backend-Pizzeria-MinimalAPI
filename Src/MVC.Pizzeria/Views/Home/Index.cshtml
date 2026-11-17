@@ -32,6 +32,13 @@
 
 <!-- MENÚ / ESPECIALIDADES -->
 <section class="menu-section py-4" id="menu">
+    @if (TempData["PizzaAgregada"] is string mensajePizzaAgregada)
+    {
+        <div class="container">
+            <div class="alert alert-success" role="status">@mensajePizzaAgregada</div>
+        </div>
+    }
+
     <div class="text-center mb-5">
         <h2 class="fw-bold display-4 text-warning mb-2 section-title">
             Nuestras Especialidades
@@ -112,15 +119,6 @@
                     </div>
                 </div>
             }
-        }
-        else
-        {
-            <!-- SIN PIZZAS -->
-            <div class="col-12">
-                <div class="alert alert-dark text-center text-warning border-warning">
-                    No hay pizzas disponibles en este momento.
-                </div>
-            </div>
         }
     </div>
 </section>
