@@ -2,9 +2,8 @@
 using Dapper;
 using Pizzeria.API.Data;
 using Pizzeria.API.Models;
-using Pizzeria.API.Repositories.IRepositories;
 
-namespace Pizzeria.API.Repositories
+namespace Pizzeria.API.Repositories.IRepositories
 {
     public class UsuarioRepository : IUsuarioRepository
     {
@@ -13,6 +12,28 @@ namespace Pizzeria.API.Repositories
         public UsuarioRepository(IDbConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
+        }
+
+        public async Task<Usuario?> ObtenerPorIdAsync(int idUsuario)
+        {
+            using var connection = _connectionFactory.CrearConexion();
+
+            const string sql = @"
+                SELECT
+                    u.IdUsuario,
+                    u.Username,
+                    u.Email,
+                    u.Password,
+                    u.Rol,
+                    c.IdCliente
+                FROM Usuario u
+                LEFT JOIN Cliente c ON c.IdUsuario = u.IdUsuario
+                WHERE u.IdUsuario = @IdUsuario";
+
+            return await connection.QuerySingleOrDefaultAsync<Usuario>(
+                sql,
+                new { IdUsuario = idUsuario }
+            );
         }
 
         public async Task<Usuario?> ObtenerPorUsuarioOEmailAsync(string usuarioOEmail)
@@ -71,7 +92,12 @@ namespace Pizzeria.API.Repositories
 
             await connection.ExecuteAsync(
                 "UPDATE Usuario SET Password = @Password WHERE IdUsuario = @IdUsuario",
-                new { Password = passwordHash, IdUsuario = idUsuario });
+                new
+                {
+                    Password = passwordHash,
+                    IdUsuario = idUsuario
+                }
+            );
         }
     }
 }

@@ -1,14 +1,14 @@
 @model MVC.Pizzeria.Models.ConfirmarPedidoViewModel
 
 @{
-    ViewData["Title"] = "Datos de entrega";
+    ViewData["Title"] = "Confirmar pedido";
 }
 
 <div class="container py-5">
     <div class="row justify-content-center">
         <div class="col-lg-7 col-xl-6">
-            <h1 class="fw-bold mb-2">Datos de entrega</h1>
-            <p class="text-muted mb-4">Completa tus datos para confirmar el pedido.</p>
+            <h1 class="fw-bold mb-2">Confirmar pedido</h1>
+            <p class="text-muted mb-4">Completá tus datos de entrega y elegí cómo querés pagar.</p>
 
             <form asp-action="Confirmar" method="post">
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
@@ -38,9 +38,14 @@
                 </div>
 
                 <div class="mb-4">
-                    <label asp-for="Email" class="form-label">Correo electrónico (opcional)</label>
-                    <input asp-for="Email" class="form-control" type="email" autocomplete="email" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
+                    <label asp-for="MedioPago" class="form-label">Medio de pago</label>
+                    <select asp-for="MedioPago" class="form-select" required>
+                        <option value="">Seleccioná un medio de pago</option>
+                        <option value="1">Efectivo</option>
+                        <option value="2">Transferencia</option>
+                        <option value="3">Tarjeta</option>
+                    </select>
+                    <span asp-validation-for="MedioPago" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex flex-column flex-sm-row gap-2">

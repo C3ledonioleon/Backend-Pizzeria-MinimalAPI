@@ -32,6 +32,10 @@
                             <strong>@pedido.Estado</strong>
                         </span>
                         <span>
+                            Medio de pago:
+                            <strong>@(pedido.MedioPago?.ToString() ?? "No registrado")</strong>
+                        </span>
+                        <span>
                             Cantidad:
                             <strong>@pedido.Detalles.Sum(detalle => detalle.Cantidad) unidad(es)</strong>
                         </span>

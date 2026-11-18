@@ -55,6 +55,8 @@ Src/
 - Registrarse e iniciar sesión con usuario o correo y contraseña.
 - Consultar el menú de pizzas.
 - Agregar pizzas al carrito, modificar cantidades y confirmar un pedido.
+- Elegir el medio de pago del pedido: efectivo, transferencia o tarjeta.
+- El medio elegido queda guardado en el pedido y se muestra en el historial; la aplicación registra la opción, pero no procesa cobros electrónicos.
 - Consultar su historial con fecha y hora, productos, cantidades, total y estado.
 - El historial se filtra en la API usando la identidad del usuario autenticado; un cliente no puede consultar los pedidos de otra cuenta.
 
@@ -122,9 +124,6 @@ La base de datos se llama `6to_Pizzeria`. La cadena de conexión se configura en
 
 `Scripts/Script.sql` crea la base, las tablas y datos de ejemplo, incluida una cuenta de administrador. **El script elimina y vuelve a crear `6to_Pizzeria`; no lo ejecutes sobre una base que quieras conservar.** `Scripts/INSERT.sql` contiene datos de ejemplo separados que también están incluidos en el script de inicialización; no lo ejecutes después de `Script.sql` en la misma base, porque intentaría insertar los mismos registros.
 
-Para una base ya existente:
-
-- Ejecutá `Scripts/MigracionImagenPizza.sql` una sola vez si todavía no tiene la columna `Pizza.ImagenUrl`.
 
 El script de inicialización crea la cuenta de prueba `admin@gmail.com` con contraseña `Admin123!`. Es una credencial de desarrollo; cambiala antes de usar la aplicación con datos reales.
 

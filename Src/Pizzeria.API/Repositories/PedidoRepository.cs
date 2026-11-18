@@ -1,3 +1,4 @@
+
 using Dapper;
 using Pizzeria.API.Data;
 using Pizzeria.API.Models;
@@ -33,7 +34,8 @@ public class PedidoRepository : IPedidoRepository
             WHERE c.IdUsuario = @IdUsuario
             ORDER BY p.FechaHora DESC";
 
-        return (await connection.QueryAsync<Pedido>(sql, new { IdUsuario = idUsuario })).ToList();
+        return (await connection.QueryAsync<Pedido>(
+            sql, new { IdUsuario = idUsuario })).ToList();
     }
 
     public async Task<Pedido?> ObtenerPorIdAsync(int id)
@@ -49,12 +51,24 @@ public class PedidoRepository : IPedidoRepository
     {
         using var connection = _connectionFactory.CrearConexion();
 
-        string sql = @"
-        INSERT INTO Pedido (FechaHora, Estado, IdCliente, Total)
-        VALUES (@FechaHora, @Estado, @IdCliente, @Total);
-        SELECT LAST_INSERT_ID();";
+        const string sql = @"
+            INSERT INTO Pedido
+            (FechaHora, Estado, MedioPago, IdCliente, Total)
+            VALUES
+            (@FechaHora, @Estado, @MedioPago, @IdCliente, @Total);
 
-        int nuevoId = await connection.ExecuteScalarAsync<int>(sql, pedido);
+            SELECT LAST_INSERT_ID();";
+
+        int nuevoId = await connection.ExecuteScalarAsync<int>(sql, new
+        {
+            pedido.FechaHora,
+            pedido.Estado,
+            MedioPago = pedido.MedioPago.HasValue
+                ? (int?)pedido.MedioPago.Value
+                : null,
+            pedido.IdCliente,
+            pedido.Total
+        });
 
         pedido.IdPedido = nuevoId;
 
@@ -65,18 +79,22 @@ public class PedidoRepository : IPedidoRepository
     {
         using var connection = _connectionFactory.CrearConexion();
 
-        string sql = @"
-        UPDATE Pedido
-        SET FechaHora = @FechaHora,
-            Estado = @Estado,
-            IdCliente = @IdCliente,
-            Total = @Total
-        WHERE IdPedido = @IdPedido";
+        const string sql = @"
+            UPDATE Pedido
+            SET FechaHora = @FechaHora,
+                Estado = @Estado,
+                MedioPago = @MedioPago,
+                IdCliente = @IdCliente,
+                Total = @Total
+            WHERE IdPedido = @IdPedido";
 
         return await connection.ExecuteAsync(sql, new
         {
             pedido.FechaHora,
             pedido.Estado,
+            MedioPago = pedido.MedioPago.HasValue
+                ? (int?)pedido.MedioPago.Value
+                : null,
             pedido.IdCliente,
             pedido.Total,
             IdPedido = id
@@ -87,9 +105,9 @@ public class PedidoRepository : IPedidoRepository
     {
         using var connection = _connectionFactory.CrearConexion();
 
-        string sql = "DELETE FROM Pedido WHERE IdPedido = @IdPedido";
-
-        return await connection.ExecuteAsync(sql, new { IdPedido = id });
+        return await connection.ExecuteAsync(
+            "DELETE FROM Pedido WHERE IdPedido = @IdPedido",
+            new { IdPedido = id });
     }
 
     public async Task ActualizarEstadoAsync(int idPedido, int nuevoEstado)
@@ -100,5 +118,4 @@ public class PedidoRepository : IPedidoRepository
             "UPDATE Pedido SET Estado = @Estado WHERE IdPedido = @IdPedido",
             new { Estado = nuevoEstado, IdPedido = idPedido });
     }
-
 }

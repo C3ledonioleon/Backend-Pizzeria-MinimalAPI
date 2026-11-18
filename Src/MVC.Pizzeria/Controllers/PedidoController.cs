@@ -4,16 +4,19 @@ using MVC.Pizzeria.Services;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using MVC.Pizzeria.Enums;
+using System.Net;
 
 namespace MVC.Pizzeria.Controllers;
 
 public class PedidoController : Controller
 {
 private readonly ApiService _apiService;
+private readonly ILogger<PedidoController> _logger;
 
-public PedidoController(ApiService apiService)
+public PedidoController(ApiService apiService, ILogger<PedidoController> logger)
 {
     _apiService = apiService;
+    _logger = logger;
 }
 
 // Mostrar el pedido
@@ -207,34 +210,15 @@ public async Task<IActionResult> Confirmar(ConfirmarPedidoViewModel datos)
 
     try
     {
-        var cliente = await _apiService.GetOptionalAsync<ClienteCreadoResponse>(
-            "api/clientes/yo");
-
-        if (cliente is null)
-        {
-            cliente = await _apiService.PostAsync<CrearClienteRequest, ClienteCreadoResponse>(
-                "api/clientes/",
-                new CrearClienteRequest
-                {
-                    Nombre = datos.Nombre ?? string.Empty,
-                    Apellido = datos.Apellido ?? string.Empty,
-                    Telefono = datos.Telefono ?? string.Empty,
-                    Direccion = datos.Direccion ?? string.Empty,
-                    Email = datos.Email ?? string.Empty
-                });
-        }
-
-        if (cliente is null)
-        {
-            ModelState.AddModelError(string.Empty, "No se pudo registrar al cliente. Intenta nuevamente.");
-            return View(datos);
-        }
-
         var pedidoCreado = await _apiService.PostAsync<CrearPedidoRequest, PedidoCreadoResponse>(
             "api/pedidos/",
             new CrearPedidoRequest
             {
-                IdCliente = cliente.IdCliente,
+                Nombre = datos.Nombre ?? string.Empty,
+                Apellido = datos.Apellido ?? string.Empty,
+                Telefono = datos.Telefono ?? string.Empty,
+                Direccion = datos.Direccion ?? string.Empty,
+                MedioPago = (int)datos.MedioPago!.Value,
                 Detalles = pedido.Detalles.Select(detalle => new CrearDetallePedidoRequest
                 {
                     IdPizza = detalle.IdPizza,
@@ -253,9 +237,27 @@ public async Task<IActionResult> Confirmar(ConfirmarPedidoViewModel datos)
         TempData["PedidoConfirmado"] = $"¡Pedido #{pedidoCreado.IdPedido} confirmado! Pronto nos pondremos en contacto contigo.";
         return RedirectToAction(nameof(Index));
     }
-    catch (HttpRequestException)
+    catch (HttpRequestException ex)
     {
-        ModelState.AddModelError(string.Empty, "No fue posible conectar con el servicio de pedidos. Intenta nuevamente.");
+        _logger.LogError(ex, "No se pudo confirmar el pedido para el usuario {Username}", User.Identity?.Name);
+
+        var mensaje = ex.StatusCode switch
+        {
+            HttpStatusCode.InternalServerError =>
+                "La API no pudo guardar el pedido. Si la base ya existía, ejecutá Scripts/MigracionMedioPagoPedido.sql y volvé a intentar.",
+            HttpStatusCode.Unauthorized =>
+                "Tu sesión venció. Cerrá sesión e iniciá nuevamente para confirmar el pedido.",
+            HttpStatusCode.Forbidden =>
+                "Tu cuenta no tiene permisos para confirmar pedidos.",
+            HttpStatusCode.BadRequest =>
+                "La API rechazó los datos del pedido. Volvé a seleccionar el medio de pago e intentá nuevamente.",
+            null =>
+                "No fue posible conectar con la API. Verificá que Pizzeria.API esté ejecutándose en localhost:5260.",
+            _ =>
+                "No se pudo confirmar el pedido. Intentá nuevamente."
+        };
+
+        ModelState.AddModelError(string.Empty, mensaje);
         return View(datos);
     }
 }

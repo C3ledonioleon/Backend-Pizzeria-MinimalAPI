@@ -59,6 +59,7 @@ CREATE TABLE Pedido (
     IdPedido INT AUTO_INCREMENT PRIMARY KEY,
     FechaHora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     Estado TINYINT NOT NULL,
+    MedioPago TINYINT NULL COMMENT '1 = Efectivo, 2 = Transferencia, 3 = Tarjeta',
 
     IdCliente INT NOT NULL,
 

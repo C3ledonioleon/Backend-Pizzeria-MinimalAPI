@@ -8,6 +8,7 @@ namespace MVC.Pizzeria.Models
         public int IdPedido { get; set; }
         public DateTime FechaHora { get; set; }
         public EstadoPedido Estado { get; set; }
+        public MedioPago? MedioPago { get; set; }
         public int IdCliente { get; set; }
         public decimal Total { get; set; }
         public List<DetallePedido> Detalles { get; set; } = new();

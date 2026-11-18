@@ -3,7 +3,6 @@ using Pizzeria.API.Repositories;
 using Pizzeria.API.Repositories.IRepositories;
 using Pizzeria.API.Services;
 using Pizzeria.API.Services.IServices;
-using Pizzeria.API.Sockets;
 
 namespace Pizzeria.API.DependencyInjection;
 
@@ -32,9 +31,6 @@ public static class DependencyInjection
 
         // Nuevo servicio de Usuario
         services.AddScoped<IUsuarioService, UsuarioService>();
-
-        // Socket cocina
-        services.AddSingleton<CocinaSocketClient>();
 
         return services;
     }

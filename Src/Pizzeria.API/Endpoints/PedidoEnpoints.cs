@@ -1,80 +1,120 @@
+
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Enums;
 using Pizzeria.API.Services.IServices;
 using System.Security.Claims;
 
 namespace Pizzeria.API.Endpoints;
+
 public static class PedidoEndpoints
 {
     public static void MapPedidoEndpoints(this WebApplication app)
     {
         var pedido = app.MapGroup("/api/pedidos");
-        
+
         pedido.WithTags("Pedido");
 
-        pedido.MapGet("/", async ( IPedidoService service) =>
+        // Obtener todos los pedidos (Administrador).
+        pedido.MapGet("/", async (IPedidoService service) =>
         {
             var pedidos = await service.ObtenerTodosAsync();
-
             return Results.Ok(pedidos);
-        }).RequireAuthorization(policy => policy.RequireRole("Administrador"));
 
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Administrador"));
+
+        // Crear un pedido (Cliente).
+        pedido.MapPost("/", async (
+            CreatePedidoDto dto,
+            ClaimsPrincipal usuario,
+            IPedidoService service) =>
+        {
+            var idUsuarioClaim =
+                usuario.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(idUsuarioClaim, out var idUsuario))
+                return Results.Unauthorized();
+
+            try
+            {
+                var pedidoCreado = await service.CrearAsync(idUsuario, dto);
+
+                return Results.Created(
+                    $"/api/pedidos/{pedidoCreado.IdPedido}",
+                    pedidoCreado);
+            }
+            catch (ArgumentException ex)
+            {
+                return Results.BadRequest(new { mensaje = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Conflict(new { mensaje = ex.Message });
+            }
+
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Cliente"));
+
+        // Obtener los pedidos del cliente autenticado.
         pedido.MapGet("/mis-pedidos", async (
             ClaimsPrincipal usuario,
             IPedidoService service) =>
         {
-            var idUsuarioClaim = usuario.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var idUsuarioClaim =
+                usuario.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (!int.TryParse(idUsuarioClaim, out var idUsuario))
                 return Results.Unauthorized();
 
             var pedidos = await service.ObtenerPorUsuarioAsync(idUsuario);
-            return Results.Ok(pedidos);
-        }).RequireAuthorization(policy => policy.RequireRole("Cliente"));
 
-        pedido.MapGet("/{id:int}", async (int id, IPedidoService service) =>
+            return Results.Ok(pedidos);
+
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Cliente"));
+
+        // Obtener un pedido específico (Administrador).
+        pedido.MapGet("/{id:int}", async (
+            int id,
+            IPedidoService service) =>
         {
             var pedido = await service.ObtenerPorIdAsync(id);
 
             return pedido is null
                 ? Results.NotFound()
                 : Results.Ok(pedido);
-        }).RequireAuthorization(policy => policy.RequireRole("Administrador"));
 
-        pedido.MapPost("/", async (
-            CreatePedidoDto dto,
-            ClaimsPrincipal usuario,
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Administrador"));
+
+        // Cambiar estado (Administrador).
+        pedido.MapPut("/{id:int}/estado", async (
+            int id,
+            EstadoPedido estado,
             IPedidoService service) =>
-        {
-            var idUsuarioClaim = usuario.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(idUsuarioClaim, out var idUsuario))
-                return Results.Unauthorized();
-
-            var pedido = await service.CrearAsync(idUsuario, dto);
-
-            return Results.Created(
-                $"/api/pedidos/{pedido.IdPedido}",
-                pedido);
-        }).RequireAuthorization(policy => policy.RequireRole("Cliente"));
-
-        pedido.MapPut("/{id:int}/estado", async ( int id,EstadoPedido estado, IPedidoService service) =>
         {
             var pedido = await service.CambiarEstadoAsync(id, estado);
 
             return pedido is null
                 ? Results.NotFound()
                 : Results.Ok(pedido);
-        }).RequireAuthorization(policy => policy.RequireRole("Administrador"));
 
-        pedido.MapDelete("/{id:int}", async ( int id,IPedidoService service) =>
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Administrador"));
+
+        // Eliminar pedido (Administrador).
+        pedido.MapDelete("/{id:int}", async (
+            int id,
+            IPedidoService service) =>
         {
             var eliminado = await service.EliminarAsync(id);
 
             return eliminado > 0
                 ? Results.Ok()
                 : Results.NotFound();
-        }).RequireAuthorization(policy => policy.RequireRole("Administrador"));
 
-        // Detalles del pedido
+        }).RequireAuthorization(policy =>
+            policy.RequireRole("Administrador"));
 
         pedido.MapPost("/{idPedido:int}/detalles", async ( int idPedido, DetallePedidoDto dto, IPedidoService service) =>
             {
