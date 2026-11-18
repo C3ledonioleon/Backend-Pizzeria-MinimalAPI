@@ -177,6 +177,11 @@ public class PedidoService : IPedidoService
         int idPedido,
         EstadoPedido nuevoEstado)
     {
+        if (!Enum.IsDefined(nuevoEstado))
+            throw new ArgumentOutOfRangeException(
+                nameof(nuevoEstado),
+                "El estado del pedido no es válido.");
+
         var pedido = await _pedidoRepository.ObtenerPorIdAsync(idPedido);
 
         if (pedido is null)

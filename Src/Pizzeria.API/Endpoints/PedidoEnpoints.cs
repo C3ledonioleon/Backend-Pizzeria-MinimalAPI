@@ -93,6 +93,14 @@ public static class PedidoEndpoints
             EstadoPedido estado,
             IPedidoService service) =>
         {
+            if (!Enum.IsDefined(estado))
+            {
+                return Results.BadRequest(new
+                {
+                    mensaje = "El estado del pedido no es válido."
+                });
+            }
+
             var pedido = await service.CambiarEstadoAsync(id, estado);
 
             return pedido is null
