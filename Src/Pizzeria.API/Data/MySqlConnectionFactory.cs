@@ -9,7 +9,7 @@ public class MySqlConnectionFactory : IDbConnectionFactory
 
     public MySqlConnectionFactory(IConfiguration configuration)
     {
-        var candidates = new[] { "6to_Pizzeria" };
+        var candidates = new[] { "5to_Pizzeria" };
         string? found = null;
         foreach (var name in candidates)
         {

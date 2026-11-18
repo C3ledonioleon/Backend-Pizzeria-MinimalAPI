@@ -100,22 +100,11 @@ public static class PedidoEndpoints
                 });
             }
 
-            try
-            {
-                var pedido = await service.CambiarEstadoAsync(id, estado);
+            var pedido = await service.CambiarEstadoAsync(id, estado);
 
-                return pedido is null
-                    ? Results.NotFound()
-                    : Results.Ok(pedido);
-            }
-            catch (ArgumentOutOfRangeException ex)
-            {
-                return Results.BadRequest(new { mensaje = ex.Message });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.Conflict(new { mensaje = ex.Message });
-            }
+            return pedido is null
+                ? Results.NotFound()
+                : Results.Ok(pedido);
 
         }).RequireAuthorization(policy =>
             policy.RequireRole("Administrador"));

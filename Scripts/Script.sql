@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS `6to_Pizzeria`;
-CREATE DATABASE `6to_Pizzeria`;
-USE `6to_Pizzeria`;
+DROP DATABASE IF EXISTS `5to_Pizzeria`;
+CREATE DATABASE `5to_Pizzeria`;
+USE `5to_Pizzeria`;
 
 CREATE TABLE Usuario (
     IdUsuario INT AUTO_INCREMENT PRIMARY KEY,
@@ -92,7 +92,7 @@ CREATE TABLE DetallePedido (
         REFERENCES Pizza(IdPizza)
 );
 
-USE `6to_Pizzeria`;
+USE `5to_Pizzeria`;
 
 
 INSERT INTO Usuario (Username, Email, Password, Rol)
@@ -146,8 +146,8 @@ VALUES
 
 INSERT INTO DetallePedido (IdPedido, IdPizza, Cantidad, PrecioUnitario, Observaciones)
 VALUES
-(6, 1, 2, 8500, 'Cortada en 12 porciones'),
-(6, 6, 1, 12500, NULL),
-(7, 5, 1, 11000, NULL),
-(7, 3, 1, 10200, 'Sin cebolla extra'),
-(8, 3, 2, 10200, 'Bien cocida');
+(1, 1, 2, 8500, 'Cortada en 12 porciones'),
+(1, 6, 1, 12500, NULL),
+(2, 5, 1, 11000, NULL),
+(2, 3, 1, 10200, 'Sin cebolla extra'),
+(3, 3, 2, 10200, 'Bien cocida');
