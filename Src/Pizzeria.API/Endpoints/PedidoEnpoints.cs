@@ -1,4 +1,3 @@
-
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Enums;
 using Pizzeria.API.Services.IServices;
@@ -101,11 +100,22 @@ public static class PedidoEndpoints
                 });
             }
 
-            var pedido = await service.CambiarEstadoAsync(id, estado);
+            try
+            {
+                var pedido = await service.CambiarEstadoAsync(id, estado);
 
-            return pedido is null
-                ? Results.NotFound()
-                : Results.Ok(pedido);
+                return pedido is null
+                    ? Results.NotFound()
+                    : Results.Ok(pedido);
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                return Results.BadRequest(new { mensaje = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.Conflict(new { mensaje = ex.Message });
+            }
 
         }).RequireAuthorization(policy =>
             policy.RequireRole("Administrador"));

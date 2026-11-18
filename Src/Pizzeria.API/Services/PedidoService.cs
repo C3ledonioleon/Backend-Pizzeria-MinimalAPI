@@ -1,4 +1,3 @@
-
 using Pizzeria.API.DTOs;
 using Pizzeria.API.Enums;
 using Pizzeria.API.Models;
@@ -187,6 +186,12 @@ public class PedidoService : IPedidoService
         if (pedido is null)
             return null;
 
+        if (!EsTransicionValida(pedido.Estado, nuevoEstado))
+        {
+            throw new InvalidOperationException(
+                $"Transición inválida: {pedido.Estado} → {nuevoEstado}");
+        }
+
         await _pedidoRepository.ActualizarEstadoAsync(
             idPedido,
             (int)nuevoEstado);
@@ -194,6 +199,29 @@ public class PedidoService : IPedidoService
         pedido.Estado = nuevoEstado;
 
         return pedido;
+    }
+
+    private static bool EsTransicionValida(
+        EstadoPedido estadoActual,
+        EstadoPedido nuevoEstado)
+    {
+        if (estadoActual == nuevoEstado)
+            return true;
+
+        return estadoActual switch
+        {
+            EstadoPedido.EsperaConfirmacion =>
+                nuevoEstado is EstadoPedido.EnPreparacion
+                    or EstadoPedido.Cancelado,
+            EstadoPedido.EnPreparacion =>
+                nuevoEstado is EstadoPedido.EnViaje
+                    or EstadoPedido.Cancelado,
+            EstadoPedido.EnViaje =>
+                nuevoEstado is EstadoPedido.Entregado
+                    or EstadoPedido.Cancelado,
+            EstadoPedido.Entregado or EstadoPedido.Cancelado => false,
+            _ => false
+        };
     }
 
     public Task<int> EliminarAsync(int id)

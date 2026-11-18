@@ -99,9 +99,15 @@ public async Task<IActionResult> CambiarEstado(int idPedido, EstadoPedido estado
             $"api/pedidos/{idPedido}/estado?estado={(int)estado}");
         TempData["MensajeAdmin"] = $"Se actualizó el estado del pedido #{idPedido}.";
     }
-    catch (HttpRequestException)
+    catch (HttpRequestException ex)
     {
-        TempData["ErrorAdmin"] = "No se pudo actualizar el estado del pedido.";
+        TempData["ErrorAdmin"] = ex.StatusCode switch
+        {
+            HttpStatusCode.Conflict => "Transición inválida: el pedido no puede retroceder o pasar a un estado incompatible.",
+            HttpStatusCode.BadRequest => "El estado seleccionado no es válido.",
+            HttpStatusCode.NotFound => "No se encontró el pedido solicitado.",
+            _ => "No se pudo actualizar el estado del pedido."
+        };
     }
 
     return RedirectToAction(nameof(Administrar));
