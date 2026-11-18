@@ -119,14 +119,14 @@ VALUES
 
 -- =========================
 
-INSERT INTO Pizza (Nombre, Precio, Descripcion, Ingredientes)
+INSERT INTO Pizza (Nombre, Precio, Descripcion, Ingredientes, ImagenUrl)
 VALUES
-('Muzzarella', 8500, 'Pizza clásica de muzzarella', 'Muzzarella, Salsa, Orégano'),
-('Napolitana', 9800, 'Con tomate y ajo', 'Muzzarella, Tomate, Ajo'),
-('Fugazzeta', 10200, 'Con mucha cebolla', 'Muzzarella, Cebolla'),
-('Especial', 11500, 'Jamón y morrones', 'Jamón, Morrón, Muzzarella'),
-('Calabresa', 11000, 'Con salame', 'Salame, Muzzarella'),
-('Cuatro Quesos', 12500, 'Mezcla de quesos', 'Roquefort, Parmesano, Muzzarella, Provolone');
+('Muzzarella', 8500, 'Pizza clásica de muzzarella', 'Muzzarella, Salsa, Orégano', '/Images/pizzas/muzzarella.jpeg'),
+('Napolitana', 9800, 'Con tomate y ajo', 'Muzzarella, Tomate, Ajo', '/Images/pizzas/napolitana.jpeg'),
+('Fugazzeta', 10200, 'Con mucha cebolla', 'Muzzarella, Cebolla', '/Images/pizzas/fugazzeta.jpeg'),
+('Especial', 11500, 'Jamón y morrones', 'Jamón, Morrón, Muzzarella', '/Images/pizzas/especial.jpeg'),
+('Calabresa', 11000, 'Con salame', 'Salame, Muzzarella', '/Images/pizzas/calabresa.jpeg'),
+('Cuatro Quesos', 12500, 'Mezcla de quesos', 'Roquefort, Parmesano, Muzzarella, Provolone', '/Images/pizzas/cuatroquesos.jpeg');
 
 -- =========================
 -- PEDIDOS
@@ -138,21 +138,16 @@ VALUES
 -- 5 Cancelado
 -- =========================
 
-INSERT INTO Pedido(Estado, IdCliente, Total)
+INSERT INTO Pedido (FechaHora, Estado, MedioPago, IdCliente, Total)
 VALUES
-(1,1,18300.00),(2,2,8500.00),(3,3,22700.00),(4,4,12500.00),(5,5,9800.00);
+('2026-11-15 20:00:00', 4, 3, 1, 29500.00),
+('2026-11-16 21:30:00', 2, 2, 2, 21200.00),
+('2026-11-17 20:20:00', 1, 1, 3, 20400.00);
 
--- =========================
--- DETALLE PEDIDOS
--- =========================
-
-INSERT INTO DetallePedido
-(IdPedido, IdPizza, Cantidad, PrecioUnitario, Observaciones)
+INSERT INTO DetallePedido (IdPedido, IdPizza, Cantidad, PrecioUnitario, Observaciones)
 VALUES
-(1,1,1,8500,'Sin aceitunas'),
-(1,2,1,9800,'Extra queso'),
-(2,1,1,8500,NULL),
-(3,4,1,11500,NULL),
-(3,5,1,11000,'Bien cocida'),
-(4,6,1,12500,'Sin orégano'),
-(5,2,1,9800,'Cancelar si demora');
+(6, 1, 2, 8500, 'Cortada en 12 porciones'),
+(6, 6, 1, 12500, NULL),
+(7, 5, 1, 11000, NULL),
+(7, 3, 1, 10200, 'Sin cebolla extra'),
+(8, 3, 2, 10200, 'Bien cocida');

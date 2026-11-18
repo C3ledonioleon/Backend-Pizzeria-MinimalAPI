@@ -277,7 +277,7 @@ public class PizzaController : Controller
 
         var carpetaWeb = _environment.WebRootPath
             ?? Path.Combine(_environment.ContentRootPath, "wwwroot");
-        var carpetaImagenes = Path.Combine(carpetaWeb, "images", "pizzas");
+        var carpetaImagenes = Path.Combine(carpetaWeb, "Images", "pizzas");
         Directory.CreateDirectory(carpetaImagenes);
 
         var nombreArchivo = $"{Guid.NewGuid():N}{extension}";
@@ -291,23 +291,23 @@ public class PizzaController : Controller
         catch (IOException)
         {
             if (System.IO.File.Exists(ruta))
-                EliminarImagenLocal($"/images/pizzas/{nombreArchivo}");
+                EliminarImagenLocal($"/Images/pizzas/{nombreArchivo}");
             throw;
         }
         catch (UnauthorizedAccessException)
         {
             if (System.IO.File.Exists(ruta))
-                EliminarImagenLocal($"/images/pizzas/{nombreArchivo}");
+                EliminarImagenLocal($"/Images/pizzas/{nombreArchivo}");
             throw;
         }
         catch (OperationCanceledException)
         {
             if (System.IO.File.Exists(ruta))
-                EliminarImagenLocal($"/images/pizzas/{nombreArchivo}");
+                EliminarImagenLocal($"/Images/pizzas/{nombreArchivo}");
             throw;
         }
 
-        return $"/images/pizzas/{nombreArchivo}";
+        return $"/Images/pizzas/{nombreArchivo}";
     }
 
     private static bool EsImagenValida(string extension, byte[] encabezado, int leidos) =>
@@ -326,7 +326,7 @@ public class PizzaController : Controller
 
     private void EliminarImagenLocal(string? imagenUrl)
     {
-        const string prefijo = "/images/pizzas/";
+        const string prefijo = "/Images/pizzas/";
         if (string.IsNullOrWhiteSpace(imagenUrl)
             || !imagenUrl.StartsWith(prefijo, StringComparison.Ordinal))
             return;
@@ -334,7 +334,7 @@ public class PizzaController : Controller
         var nombreArchivo = Path.GetFileName(imagenUrl);
         var carpetaWeb = _environment.WebRootPath
             ?? Path.Combine(_environment.ContentRootPath, "wwwroot");
-        var carpetaImagenes = Path.GetFullPath(Path.Combine(carpetaWeb, "images", "pizzas"));
+        var carpetaImagenes = Path.GetFullPath(Path.Combine(carpetaWeb, "Images", "pizzas"));
         var ruta = Path.GetFullPath(Path.Combine(carpetaImagenes, nombreArchivo));
         if (!ruta.StartsWith(carpetaImagenes + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
             return;

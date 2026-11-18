@@ -59,7 +59,7 @@
             @foreach (var pizza in Model)
             {
                 var imagenPizza = pizza.ImagenUrl;
-                if (string.IsNullOrWhiteSpace(imagenPizza))
+                if (string.IsNullOrWhiteSpace(imagenPizza) || imagenPizza.StartsWith("/img/", StringComparison.OrdinalIgnoreCase))
                 {
                     imagenPizza = pizza.IdPizza switch
                     {

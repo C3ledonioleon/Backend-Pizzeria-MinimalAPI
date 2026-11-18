@@ -72,6 +72,21 @@
         <div class="row g-4">
             @foreach (var pizza in Model)
             {
+                var imagenPizza = pizza.ImagenUrl;
+                if (string.IsNullOrWhiteSpace(imagenPizza) || imagenPizza.StartsWith("/img/", StringComparison.OrdinalIgnoreCase))
+                {
+                    imagenPizza = pizza.IdPizza switch
+                    {
+                        1 => "/Images/pizzas/muzzarella.jpeg",
+                        2 => "/Images/pizzas/napolitana.jpeg",
+                        3 => "/Images/pizzas/fugazzeta.jpeg",
+                        4 => "/Images/pizzas/especial.jpeg",
+                        5 => "/Images/pizzas/calabresa.jpeg",
+                        6 => "/Images/pizzas/cuatroquesos.jpeg",
+                        _ => string.Empty
+                    };
+                }
+
                 <div class="col-12 col-lg-6">
                     <section class="card shadow-sm h-100">
                         @if (User.IsInRole("Administrador"))
@@ -123,9 +138,9 @@
                         else
                         {
                             <div class="card-body">
-                                @if (!string.IsNullOrWhiteSpace(pizza.ImagenUrl))
+                                @if (!string.IsNullOrWhiteSpace(imagenPizza))
                                 {
-                                    <img src="@pizza.ImagenUrl" alt="Pizza @pizza.Nombre" class="img-fluid rounded mb-3" style="max-height: 240px; width: 100%; object-fit: cover;" />
+                                    <img src="@imagenPizza" alt="Pizza @pizza.Nombre" class="img-fluid rounded mb-3" style="max-height: 240px; width: 100%; object-fit: cover;" />
                                 }
                                 <h2 class="h4">@pizza.Nombre</h2>
                                 <p>@pizza.Descripcion</p>
